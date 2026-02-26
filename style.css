@@ -1,16 +1,28 @@
 /* 🌸 カード全体（room-card） */
 .room-card {
     width: 80%;
-    background: #F8DCDC; /* 淡いピンク */
-    border-radius: 24px; /* 大きめ角丸 */
+    background: #F8DCDC;      /* 淡いピンク */
+    border-radius: 24px;      /* 大きめ角丸 */
     padding: 20px;
-    margin: 12px auto;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); /* ふわっと強めの影 */
+    margin: 10px auto;
+
+    /* ▼ 浮き感（ふわっと浮かせる影） */
+    box-shadow: 
+        0px 12px 28px rgba(0, 0, 0, 0.25),
+        0px 6px 12px rgba(0, 0, 0, 0.12);
+transform: translateY(-4px);
+transition: transform 0.22s ease, box-shadow 0.22s ease;
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
-
+/* ▼ 押し感（押した時に沈むアニメ） */
+.room-card:active {
+    transform: translateY(4px);
+    box-shadow:
+        0px 2px 6px rgba(0, 0, 0, 0.10),
+        0px 1px 3px rgba(0, 0, 0, 0.06);
+}
 /* 🌸 上段（アイコン＋日本語タイトル＋白タグ） */
 .room-card-top {
     display: flex;
@@ -63,7 +75,7 @@
     flex: 1;
 }
 .door-icon {
-    width: 70px;
-    height: 70px;
-    margin-top: 45px;
+    width: 60px;
+    height: 60px;
+    margin-top: 40px;
 }
