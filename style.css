@@ -1,0 +1,139 @@
+/* 🌸 カード全体（room-card） */
+.room-card {
+    width: 80%;
+    background: #F8DCDC;      /* 淡いピンク */
+    border-radius: 24px;      /* 大きめ角丸 */
+    padding: 20px;
+    margin: 0px auto;
+.room-card:first-of-type {
+    margin-top: 20px;
+}
+    /* ▼ 浮き感（ふわっと浮かせる影） */
+    box-shadow:
+  0px 22px 45px rgba(0,0,0,0.25),
+  0px 12px 24px rgba(0,0,0,0.15);
+transform: translateY(-22px);
+transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+/* ▼ 押した時のアニメ（pressing クラス） */
+.room-card.pressing {
+    transform: translateY(18px); 
+    box-shadow:
+        0px 4px 12px rgba(0, 0, 0, 0.15),
+        0px 2px 6px rgba(0, 0, 0, 0.10);
+}
+/* 🌸 上段（アイコン＋日本語タイトル＋白タグ） */
+.room-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+
+/* アイコン（左側） */
+.room-card-icon {
+    font-size: 34px; /* 大きさ調整OK */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 日本語タイトル */
+.room-card-title-ja {
+    font-size: 35px;
+    font-weight: 600;
+    color: #555;
+    text-align: center;
+}
+
+/* 白タグ（5–2Fとか） */
+.room-card-tag {
+    background: white;
+    padding: 6px 18px;
+    border-radius: 22px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #444;
+    margin-left: auto;
+}
+
+/* 🌸 英語タイトル（Rooms 1–2 など） */
+.room-card-title-en {
+    font-size: 25px;
+    font-weight: 600;
+    color: #7B7B7B;
+    text-align: center;
+}
+.room-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.center-title {
+    text-align: center;
+    flex: 1;
+}
+.door-icon {
+    width: 60px;
+    height: 60px;
+    margin-top: 40px;
+}
+a {
+  text-decoration: none;
+}
+/* ▼ 2ページ目ヘッダー（カテゴリー用） ---------------------- */
+
+.topbar {
+  width: 100%;
+  background: #DDEEFF;              /* 1ページ目と同じ水色 */
+  padding: 14px 20px 18px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
+/* 左：戻るボタン */
+.back {
+  font-size: 40px;
+  text-decoration: none;
+  color: #555;
+  padding: 0 10px;
+}
+
+/* タイトル（お部屋｜カテゴリ・Categories） */
+.header-title {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  flex: 1;
+}
+
+.header-title-ja {
+  font-size: 32px;
+  font-weight: 600;
+  color: #333;
+}
+
+.header-title-en {
+  font-size: 20px;
+  color: #777;
+  margin-top: 4px;
+}
+
+/* 右：カニ画像 */
+.header-crab {
+  width: 80px;
+  height: auto;
+}
+/* 右スペース（カニ画像の空白確保） */
+.header-right {
+    width: 80px;
+    height: 80px;
+}
