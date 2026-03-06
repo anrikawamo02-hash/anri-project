@@ -257,8 +257,9 @@ const basePath = `photos/${room}/${catFolder}/`;
   }
 
   if (page === 'category') {
-    initCategoryPage();
-    bindStrongTapFeedback('.list a.btn');
+  initCategoryPage();
+  bindStrongTapFeedback('.list a');
+}
   }
   if (page === 'swipe') initSwipePage();
   if (page === 'index') {
