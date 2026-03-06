@@ -62,7 +62,59 @@
       prefix: 'Main',
       icon: '🛏️'
     },
+　　　main7: {
+  jp: 'メインルーム',
+  en: 'Main room',
+  noteJp: SAME_TYPE_NOTE_JP,
+  noteEn: SAME_TYPE_NOTE_EN,
+  prefix: 'Main',
+  icon: '🛏'
+},
 
+main8: {
+  jp: 'メインルーム',
+  en: 'Main room',
+  noteJp: SAME_TYPE_NOTE_JP,
+  noteEn: SAME_TYPE_NOTE_EN,
+  prefix: 'Main',
+  icon: '🛏'
+},
+
+main9_10_54: {
+  jp: 'メインルーム',
+  en: 'Main room',
+  noteJp: SAME_TYPE_NOTE_JP,
+  noteEn: SAME_TYPE_NOTE_EN,
+  prefix: 'Main',
+  icon: '🛏'
+},
+
+main9: {
+  jp: 'メインルーム',
+  en: 'Main room',
+  noteJp: SAME_TYPE_NOTE_JP,
+  noteEn: SAME_TYPE_NOTE_EN,
+  prefix: 'Main',
+  icon: '🛏'
+},
+
+main10: {
+  jp: 'メインルーム',
+  en: 'Main room',
+  noteJp: SAME_TYPE_NOTE_JP,
+  noteEn: SAME_TYPE_NOTE_EN,
+  prefix: 'Main',
+  icon: '🛏'
+},
+
+main11: {
+  jp: 'メインルーム',
+  en: 'Main room',
+  noteJp: SAME_TYPE_NOTE_JP,
+  noteEn: SAME_TYPE_NOTE_EN,
+  prefix: 'Main',
+  icon: '🛏'
+},
     // Keep numbers in label
     main7: { jp: 'メインルーム（7）', en: 'Main room (7)', prefix: 'Main', icon: '🛏️' },
     main8: { jp: 'メインルーム（8）', en: 'Main room (8)', prefix: 'Main', icon: '🛏️' },
