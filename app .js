@@ -186,7 +186,7 @@ main11: {
       const html = [];
 
       mainCats.forEach((catKey) => {
-        const m = CATEGORY_META[catKey];
+        const m = CATEGORY_META[catKey] || ROOM_LABELS[catKey];
         if (!m) return;
         html.push(
           buildCategoryLink({
