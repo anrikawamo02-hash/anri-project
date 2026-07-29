@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#130a11">
+  <title>Anri's FF14 Guide</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sparkle-layer" aria-hidden="true"></div>
+  <div class="app-shell">
+    <header class="top-grid" id="home">
+      <section class="hero panel" aria-label="Anri's FF14 Guide">
+        <img src="assets/hero.jpg" alt="Anri's FF14 Guideのヘッダーイメージ">
+      </section>
+
+      <aside class="profile panel">
+        <span class="corner-butterfly" aria-hidden="true">🦋</span>
+        <h1>杏里の設定</h1>
+        <div class="profile-main">
+          <img class="avatar" src="assets/avatar.jpg" alt="杏里のキャラクター">
+          <div>
+            <strong>Anri <span>♥</span></strong>
+            <p><b>メインジョブ：</b>踊り子</p>
+            <p><b>プレイスタイル：</b>まったりだけど火力も大事！</p>
+            <p><b>苦手なこと：</b>ギミックの位置取り<br>／欲張りすぎて床ペロw</p>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <button class="ghost-btn" data-toast="プロフィール編集は次の段階でつなげます♡">✎ プロフィール編集</button>
+          <button class="ghost-btn" data-toast="ホットバー保存・読込は次の段階でつなげます♡">⌘ ホットバー保存・読込</button>
+        </div>
+        <button class="primary-btn" id="openHelp">✦ アプリの使い方 ›</button>
+      </aside>
+    </header>
+
+    <nav class="main-nav panel" aria-label="メインメニュー">
+      <button class="nav-pill active" data-target="home">♥ HOME</button>
+      <button class="nav-pill" data-target="jobs">✿ ジョブ選択</button>
+      <button class="nav-pill" data-target="hotbar">✤ ホットバー</button>
+      <button class="nav-pill" data-target="rotation">♡ スキル回し</button>
+      <button class="nav-pill" data-target="boss">✦ ボス攻略</button>
+      <button class="nav-pill" data-target="equipment">🦋 装備・マテリア</button>
+      <button class="nav-pill" data-target="settings">⚙ 設定・その他</button>
+    </nav>
+
+    <main class="dashboard-grid">
+      <section class="feature-card panel" id="jobs">
+        <div class="section-head">
+          <div>
+            <h2>ジョブ選択</h2>
+            <span>JOB SELECT</span>
+          </div>
+          <span class="decor">🦋</span>
+        </div>
+
+        <button class="job-card selected" data-job="dancer">
+          <span class="job-symbol">◔</span>
+          <span class="job-copy"><b>踊り子</b><small>DANCER</small><em>メインジョブ</em></span>
+          <img src="assets/dancer.jpg" alt="踊り子のキャラクター">
+        </button>
+
+        <button class="job-card reaper" data-job="reaper">
+          <span class="job-symbol">⚔</span>
+          <span class="job-copy"><b>リーパー</b><small>REAPER</small><em>追加予定</em></span>
+          <img src="assets/reaper.jpg" alt="リーパーのキャラクター">
+        </button>
+
+        <button class="add-job" data-toast="新しいジョブ追加は、踊り子完成後に開放予定です♡">
+          <span>＋</span>新しいジョブを追加
+        </button>
+
+        <div class="card-footer">
+          <button class="ghost-btn" data-target="home">← 戻る</button>
+          <button class="soft-btn" data-toast="データ管理は後から安全に追加します♡">データのコピー・削除</button>
+        </div>
+      </section>
+
+      <section class="feature-card panel" id="rotation">
+        <div class="section-head">
+          <div>
+            <h2>スキル回し</h2>
+            <span>ROTATION GUIDE</span>
+          </div>
+          <span class="decor">🦋</span>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="スキル回しの種類">
+          <button class="tab active" data-rotation="single">単体</button>
+          <button class="tab" data-rotation="aoe">範囲</button>
+          <button class="tab" data-rotation="opener">開幕</button>
+          <button class="tab" data-rotation="burst">バースト</button>
+        </div>
+
+        <div class="patch-row">
+          <strong id="rotationTitle">単体 基本回し</strong>
+          <span>対応パッチ：確認前</span>
+        </div>
+        <ol class="rotation-list" id="rotationList"></ol>
+        <div class="tip-box" id="rotationTip">
+          <b>ここでバフ！</b>
+          <p>今は見た目確認用の仮データ。最新パッチを確認してから正しい内容へ差し替えます♡</p>
+        </div>
+      </section>
+
+      <section class="feature-card panel" id="hotbar">
+        <div class="section-head">
+          <div>
+            <h2>ホットバー診断</h2>
+            <span>HOTBAR CHECK</span>
+          </div>
+          <span class="decor">🦋</span>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="ホットバー表示">
+          <button class="tab active">現在の配置</button>
+          <button class="tab" data-toast="おすすめ配置は、杏里の実際の配置を登録してから作ります♡">おすすめ配置</button>
+        </div>
+
+        <h3>あなたのホットバー配置</h3>
+        <div class="hotbar-set">
+          <div class="trigger-label">L2</div>
+          <div class="cross-pad" aria-label="L2側ホットバー">
+            <button class="skill up">△<small>ファウンテン</small></button>
+            <button class="skill left">□<small>カスケード</small></button>
+            <button class="skill right">○<small>リバース</small></button>
+            <button class="skill down">×<small>フォール</small></button>
+          </div>
+        </div>
+        <div class="hotbar-set">
+          <div class="trigger-label">R2</div>
+          <div class="cross-pad" aria-label="R2側ホットバー">
+            <button class="skill up">△<small>サベッジ</small></button>
+            <button class="skill left">□<small>シャワー</small></button>
+            <button class="skill right">○<small>フラリッシュ</small></button>
+            <button class="skill down">×<small>テクニカル</small></button>
+          </div>
+        </div>
+
+        <div class="diagnosis">
+          <h3>診断結果</h3>
+          <p class="good">✓ コンボがまとまっていてGood♡</p>
+          <p>⚠ 正式診断は実際のホットバー登録後に行います</p>
+        </div>
+        <button class="primary-btn" data-toast="まずは現在のホットバーを登録できる画面を作ります♡">✦ ホットバーを登録する</button>
+      </section>
+
+      <section class="feature-card panel" id="boss">
+        <div class="section-head">
+          <div>
+            <h2>ボス攻略</h2>
+            <span>BOSS GUIDE</span>
+          </div>
+          <span class="decor">🦋</span>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="ボス攻略の表示">
+          <button class="tab active" data-boss="mechanic">ギミック解説</button>
+          <button class="tab" data-boss="movement">立ち回り</button>
+          <button class="tab" data-boss="mistake">よくあるミス</button>
+        </div>
+
+        <h3>○○討滅戦 <span class="demo-label">表示サンプル</span></h3>
+        <article class="boss-guide" id="bossGuide">
+          <h4>ドーナツ攻撃 ♡</h4>
+          <p>ボスの周りにドーナツ型の攻撃が発生！</p>
+          <div class="mechanic-visual">
+            <div class="donut"><span>杏里</span></div>
+            <div class="mechanic-copy">
+              <b>安全な場所へ移動！</b>
+              <hr>
+              <p>踊り子なら、移動しながら攻撃を続けられる場面も表示する。</p>
+            </div>
+          </div>
+        </article>
+
+        <aside class="anri-point">
+          <div>
+            <h4>杏里ポイント♡</h4>
+            <p>どこで移動を始めるか、移動中に何を押すか、開幕のどこで技を使うかまで載せるよ！</p>
+          </div>
+          <img src="assets/boss-point.jpg" alt="杏里のキャラクター">
+        </aside>
+
+        <div class="card-footer">
+          <button class="ghost-btn" data-toast="前のギミックへ戻ります">‹ 前のギミック</button>
+          <button class="ghost-btn" data-toast="次のギミックへ進みます">次のギミック ›</button>
+        </div>
+      </section>
+    </main>
+
+    <section class="placeholder-grid" id="equipment">
+      <article class="mini-panel panel">
+        <h2>装備・マテリア</h2>
+        <p>最新パッチの装備、マテリア、食事を後から追加するデータ枠。</p>
+        <button class="soft-btn" data-toast="装備ページは踊り子の土台完成後に追加します♡">準備中</button>
+      </article>
+      <article class="mini-panel panel" id="settings">
+        <h2>設定・その他</h2>
+        <p>色、文字サイズ、キラキラ表示をこのまま調整できます。</p>
+      </article>
+    </section>
+
+    <footer class="settings-bar panel">
+      <div class="setting-group">
+        <b>可愛いテーマに変更</b>
+        <div class="theme-buttons">
+          <button class="theme-dot pink active" data-theme="pink" aria-label="ピンクテーマ">♡</button>
+          <button class="theme-dot purple" data-theme="purple" aria-label="紫テーマ">♥</button>
+          <button class="theme-dot black" data-theme="black" aria-label="黒テーマ">♥</button>
+        </div>
+      </div>
+      <div class="setting-group">
+        <b>フォントサイズ</b>
+        <div class="font-buttons">
+          <button data-font="small">小</button>
+          <button class="active" data-font="medium">中</button>
+          <button data-font="large">大</button>
+        </div>
+      </div>
+      <div class="setting-group wide">
+        <b>ギャルモードON</b>
+        <label class="switch-label">キラキラエフェクト
+          <input type="checkbox" id="sparkleToggle" checked>
+          <span class="switch">ON ♥</span>
+        </label>
+      </div>
+      <blockquote>
+        “うちのペースで、うちが強くなる♡”<br>
+        <span>今日も可愛く、強く、生き残るよ〜っ♡</span>
+      </blockquote>
+    </footer>
+  </div>
+
+  <dialog id="helpDialog">
+    <button class="dialog-close" id="closeHelp" aria-label="閉じる">×</button>
+    <h2>アプリの使い方♡</h2>
+    <p>まずは踊り子を選び、スキル回し・ホットバー・ボス攻略を順番に練習します。</p>
+    <p>最終目標は、見て押すだけでなく、指と感覚で自然に回せること。</p>
+    <button class="primary-btn" id="startGuide">踊り子から始める</button>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
