@@ -205,6 +205,14 @@ button { border: 0; cursor: pointer; }
 }
 .combo { padding: 3px 6px; border-radius: 6px; background: rgba(93, 74, 87, .55); color: #f7dbe4; font-size: .68rem; }
 .skill-orb { width: 29px; aspect-ratio: 1; border-radius: 8px; background: radial-gradient(circle at 35% 35%, #fff, var(--pink-strong) 28%, #673178 68%, #190f25); box-shadow: 0 0 10px rgba(255, 107, 171, .5); }
+.skill-icon {
+  display: block;
+  width: 29px;
+  height: 29px;
+  object-fit: cover;
+  border-radius: 7px;
+  box-shadow: 0 0 10px rgba(255, 107, 171, .34);
+}
 .tip-box { position: relative; z-index: 1; margin-top: 15px; padding: 12px; border-radius: 12px; background: linear-gradient(135deg, #ffdce7, #f4b4cb); color: #63253e; }
 .tip-box b { font-size: 1.05rem; }
 .tip-box p { margin: 5px 0 0; font-size: .82rem; }
