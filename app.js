@@ -1,16 +1,17 @@
 const rotationData = {
   single: {
     title: "単体 基本回し",
+    patch: "7.55",
     steps: [
-      ["カスケード", "L2＋□"],
-      ["ファウンテン", "L2＋△"],
-      ["光ったProcを優先", "L2＋○"],
-      ["次のProcを確認", "L2＋×"],
-      ["ゲージ技を使う", "R2＋□"],
-      ["バフを合わせる", "R2＋△"],
-      ["次のループへ", "R2＋○"]
+      ["カスケード", "基本①"],
+      ["ファウンテン", "基本②"],
+      ["リバースカスケード", "光ったら優先"],
+      ["ファウンテンフォール", "光ったら優先"],
+      ["扇の舞い", "羽がある時"],
+      ["剣の舞い", "エスプリ50以上"],
+      ["基本コンボへ戻る", "くり返し"]
     ],
-    tip: "今は画面確認用の仮データ。最新パッチと杏里の実際の配置を確認して、正しい順番へ差し替えます♡"
+    tip: "基本はカスケード→ファウンテン。光ったProcを先に使い、羽とエスプリを溢れさせないように処理します。ボタン表示は杏里の実際のクロスホットバー確認後に入れます♡"
   },
   aoe: {
     title: "範囲 基本回し",
@@ -77,6 +78,8 @@ const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 function renderRotation(key) {
   const data = rotationData[key];
   $("#rotationTitle").textContent = data.title;
+  const patchLabel = $("#rotation .patch-row span");
+  if (patchLabel) patchLabel.textContent = `対応パッチ：${data.patch || "確認前"}`;
   $("#rotationList").innerHTML = data.steps.map(([name, combo]) => `
     <li><span>${name}</span><span class="combo">${combo}</span><span class="skill-orb" aria-hidden="true"></span></li>
   `).join("");
