@@ -666,12 +666,35 @@ function getRegisteredSkillIds(sets) {
   );
 }
 
+function getEmptyHotbarSlots(sets) {
+  return sets.flatMap(set => Object.entries(set.slots || {}).map(([slotKey, slot]) => ({
+    setId: set.id,
+    set: set.set,
+    trigger: set.trigger,
+    slotKey,
+    button: slot?.button || "—",
+    skillId: slot?.skillId || ""
+  }))).filter(slot => !slot.skillId);
+}
+
+function formatHotbarLocation(slot) {
+  const group = HOTBAR_GROUPS.find(item => item.sides.some(([, id]) => id === slot.setId));
+  return `${group?.label || slot.set || "ホットバー"}・${slot.trigger}＋${slot.button}`;
+}
+
 function diagnoseHotbar(job, levelData, sets) {
   const registeredIds = getRegisteredSkillIds(sets);
+  const registeredRequired = levelData.requiredSkills.filter(skill => registeredIds.has(skill.id));
   const missingRequired = levelData.requiredSkills.filter(skill => !registeredIds.has(skill.id));
+  const requiredIds = new Set(levelData.requiredSkills.map(skill => skill.id));
+  const allKnownSkills = [...levelData.requiredSkills, ...levelData.recommendedSkills];
+  const skillById = new Map(allKnownSkills.map(skill => [skill.id, skill]));
   const rotationIds = new Set(Object.values(levelData.rotationSkillIds).flat());
-  const missingFromRotations = [...rotationIds].filter(skillId => !registeredIds.has(skillId));
-  return { missingRequired, missingFromRotations };
+  const missingFromRotations = [...rotationIds]
+    .filter(skillId => !registeredIds.has(skillId) && !requiredIds.has(skillId))
+    .map(skillId => skillById.get(skillId) || { id: skillId, name: skillId, reason: "スキル回しで使用するアクション" });
+  const emptySlots = getEmptyHotbarSlots(sets);
+  return { registeredIds, registeredRequired, missingRequired, missingFromRotations, emptySlots };
 }
 
 function renderRotation(key = selectedRotation) {
@@ -742,37 +765,60 @@ function renderHotbarSet(set) {
 
 function renderDiagnosis(job, levelData, sets) {
   const box = $("#hotbarDiagnosis");
-  const result = diagnoseHotbar(job, levelData, sets);
 
   if (!levelData.requiredSkillsVerified) {
     box.innerHTML = `<h3>診断結果</h3><div class="diagnosis-list">
-      <p class="diagnosis-item good">✓ ジョブとレベルを切り替えて読み込める構造に対応済み♡</p>
-      <p class="diagnosis-item good">✓ 必須スキルと回し使用スキルを別々に照合できる診断構造に対応済み♡</p>
-      <p class="diagnosis-item info">Lv${selectedLevel}の正式データはまだ登録されていません。</p>
+      <p class="diagnosis-item info">Lv${selectedLevel}の正式な診断データはまだ登録されていません。</p>
     </div>`;
     return;
   }
 
   if (!job.hotbarCurrentVerified && selectedHotbarView === "current") {
-    const requiredNames = levelData.requiredSkills.map(skill => skill.name).join("・");
-    const recommendedNames = levelData.recommendedSkills.map(skill => skill.name).join("・");
     box.innerHTML = `<h3>診断結果</h3><div class="diagnosis-list">
-      <p class="diagnosis-item good">✓ Lv${selectedLevel}の必須スキルデータをPatch ${levelData.sourcePatch}基準で登録済み♡</p>
-      <p class="diagnosis-item info"><strong>必須 ${levelData.requiredSkills.length}個：</strong>${requiredNames}</p>
-      ${recommendedNames ? `<p class="diagnosis-item info"><strong>場面別推奨 ${levelData.recommendedSkills.length}個：</strong>${recommendedNames}</p>` : ""}
-      <p class="diagnosis-item warning">⚠ 現在表示中の配置は見本データです。杏里の実際の全ホットバーを登録するまで、不足判定は開始しません。</p>
+      <p class="diagnosis-item good">✓ Lv${selectedLevel}の必須スキル ${levelData.requiredSkills.length}個を診断できます♡</p>
+      <p class="diagnosis-item warning">⚠ 現在は見本配置です。「ホットバーを登録する」から杏里の配置を1つ保存すると診断を開始します。</p>
     </div>`;
     return;
   }
 
-  const warnings = [
-    ...result.missingRequired.map(skill => `<p class="diagnosis-item warning">⚠ <strong>${skill.name}</strong> が未登録です<br><small>${skill.reason}</small></p>`),
-    ...result.missingFromRotations.map(skillId => `<p class="diagnosis-item warning">⚠ 回しで使うスキル（ID: ${skillId}）がホットバーにありません</p>`)
+  if (selectedHotbarView === "recommended") {
+    box.innerHTML = `<h3>診断結果</h3><div class="diagnosis-list">
+      <p class="diagnosis-item info">おすすめ配置の自動作成は次の作業で追加します。現在配置の不足診断は「現在の配置」で確認できます♡</p>
+    </div>`;
+    return;
+  }
+
+  const result = diagnoseHotbar(job, levelData, sets);
+  const total = levelData.requiredSkills.length;
+  const registered = result.registeredRequired.length;
+  const firstEmpty = result.emptySlots[0];
+  const summaryClass = result.missingRequired.length ? "warning" : "good";
+  const items = [
+    `<p class="diagnosis-item ${summaryClass}"><strong>必須スキル登録状況：${registered}／${total}</strong><br><small>表示レベル Lv${selectedLevel} と連動して診断しています。</small></p>`
   ];
 
-  box.innerHTML = `<h3>診断結果</h3><div class="diagnosis-list">${warnings.length
-    ? warnings.join("")
-    : `<p class="diagnosis-item good">✓ Lv${selectedLevel}で必要な登録済みスキルに不足はありません♡</p>`}</div>`;
+  result.missingRequired.forEach((skill, index) => {
+    const suggestion = result.emptySlots[index]
+      ? `<br><small>空き候補：${formatHotbarLocation(result.emptySlots[index])}</small>`
+      : `<br><small>空き枠がないため、入れ替え候補は次の診断段階で案内します。</small>`;
+    items.push(`<p class="diagnosis-item warning">⚠ <strong>${skill.name}</strong> が未登録です<br><small>${skill.reason}</small>${suggestion}</p>`);
+  });
+
+  result.missingFromRotations.forEach(skill => {
+    items.push(`<p class="diagnosis-item warning">⚠ <strong>${skill.name}</strong> がスキル回しで使われますが、現在のホットバーにありません<br><small>${skill.reason}</small></p>`);
+  });
+
+  if (!result.missingRequired.length && !result.missingFromRotations.length) {
+    items.push(`<p class="diagnosis-item good">✓ Lv${selectedLevel}で必要なスキルに不足はありません♡</p>`);
+  }
+
+  if (result.emptySlots.length) {
+    items.push(`<p class="diagnosis-item info">空き枠：${result.emptySlots.length}枠${firstEmpty ? `（最初の空き：${formatHotbarLocation(firstEmpty)}）` : ""}</p>`);
+  } else {
+    items.push(`<p class="diagnosis-item info">空き枠はありません。</p>`);
+  }
+
+  box.innerHTML = `<h3>診断結果</h3><div class="diagnosis-list">${items.join("")}</div>`;
 }
 
 function renderHotbar() {
@@ -903,7 +949,12 @@ const SKILL_ICON_BY_ID = {
   "windmill":"Windmill.png","bladeshower":"Bladeshower.png","rising-windmill":"Rising_Windmill.png","bloodshower":"Bloodshower.png",
   "standard-step":"Standard_Step.png","fan-dance":"Fan_Dance.png","fan-dance-ii":"Fan_Dance_II.png","en-avant":"En_Avant.png",
   "second-wind":"Second_Wind.png","peloton":"Peloton.png","head-graze":"Head_Graze.png","arms-length":"Arm's_Length.png",
-  "leg-graze":"Leg_Graze.png","foot-graze":"Foot_Graze.png"
+  "leg-graze":"Leg_Graze.png","foot-graze":"Foot_Graze.png",
+  "curing-waltz":"Curing_Waltz.png","shield-samba":"Shield_Samba.png","closed-position":"Closed_Position.png",
+  "devilment":"Devilment.png","fan-dance-iii":"Fan_Dance_III.png","technical-step":"Technical_Step.png",
+  "flourish":"Flourish.png","saber-dance":"Saber_Dance.png","improvisation":"Improvisation.png",
+  "tillana":"Tillana.png","fan-dance-iv":"Fan_Dance_IV.png","starfall-dance":"Starfall_Dance.png",
+  "last-dance":"Last_Dance.png","finishing-move":"Finishing_Move.png","dance-of-the-dawn":"Dance_of_the_Dawn.png"
 };
 function skillIcon(skillId){ const f=SKILL_ICON_BY_ID[skillId]; return f ? `assets/icons/jobs/dancer/skills/${f}` : ""; }
 function emptySlots(){ return Object.fromEntries(HOTBAR_SLOT_META.map(([k,,b])=>[k,{button:b,skillId:"",name:"空き"}])); }
@@ -960,12 +1011,24 @@ function saveHotbarRegistration(){
   group.sides.forEach(([trigger,id],sideIndex)=>{ const set=getSetById(id); const side=$$('.visual-registration .controller-side')[sideIndex];
     $$('select',side).forEach(select=>{ const key=select.dataset.slotKey; const meta=HOTBAR_SLOT_META.find(([k])=>k===key); const sk=skillMap.get(select.value); set.slots[key]=sk?.id?{button:meta[2],skillId:sk.id,name:sk.name}:{button:meta[2],skillId:"",name:"空き"}; });
   });
-  localStorage.setItem(`anriHotbar-${selectedJob}-all-v6`,JSON.stringify(getSelectedJob().hotbar.current)); $("#hotbarDialog").close(); selectedHotbarView='current';
-  $$('#hotbar .tab').forEach(i=>i.classList.toggle('active',i.dataset.hotbarView==='current')); renderHotbar(); showToast(`${group.label}を保存しました♡`);
+  const job = getSelectedJob();
+  job.hotbarCurrentVerified = true;
+  localStorage.setItem(`anriHotbar-${selectedJob}-all-v6`,JSON.stringify(job.hotbar.current));
+  localStorage.setItem(`anriHotbar-${selectedJob}-verified-v14`,"true");
+  $("#hotbarDialog").close(); selectedHotbarView='current';
+  $$('#hotbar .tab').forEach(i=>i.classList.toggle('active',i.dataset.hotbarView==='current')); renderHotbar(); showToast(`${group.label}を保存して診断しました♡`);
 }
 function restoreSavedHotbar(){
-  try{ const saved=JSON.parse(localStorage.getItem('anriHotbar-dancer-all-v6')||localStorage.getItem('anriHotbar-dancer-set1')); if(Array.isArray(saved)) jobData.dancer.hotbar.current=saved; }
-  catch(e){console.warn('保存済みホットバーを読み込めませんでした',e);} ensureAllHotbarGroups();
+  try{
+    const raw = localStorage.getItem('anriHotbar-dancer-all-v6') || localStorage.getItem('anriHotbar-dancer-set1');
+    const saved = JSON.parse(raw);
+    if(Array.isArray(saved)) {
+      jobData.dancer.hotbar.current = saved;
+      jobData.dancer.hotbarCurrentVerified = localStorage.getItem('anriHotbar-dancer-verified-v14') === 'true' || Boolean(raw);
+    }
+  }
+  catch(e){console.warn('保存済みホットバーを読み込めませんでした',e);}
+  ensureAllHotbarGroups();
 }
 
 $$('[data-target]').forEach(button => button.addEventListener('click', () => scrollToTarget(button.dataset.target)));
@@ -982,7 +1045,7 @@ $("#registerHotbar").addEventListener("click", openHotbarRegistration);
 $("#registrationGroup").addEventListener("change", event => { selectedRegistrationGroup = event.target.value; renderRegistrationForm(); });
 $("#closeHotbarDialog").addEventListener("click", () => $("#hotbarDialog").close());
 $("#hotbarForm").addEventListener("submit", event => { event.preventDefault(); saveHotbarRegistration(); });
-$("#resetHotbarForm").addEventListener("click", () => { localStorage.removeItem(`anriHotbar-${selectedJob}-all-v6`); localStorage.removeItem(`anriHotbar-${selectedJob}-set1`); location.reload(); });
+$("#resetHotbarForm").addEventListener("click", () => { localStorage.removeItem(`anriHotbar-${selectedJob}-all-v6`); localStorage.removeItem(`anriHotbar-${selectedJob}-set1`); localStorage.removeItem(`anriHotbar-${selectedJob}-verified-v14`); location.reload(); });
 $("#hotbarDialog").addEventListener("click", event => { if (event.target === $("#hotbarDialog")) $("#hotbarDialog").close(); });
 
 $$('[data-theme]').forEach(button => button.addEventListener('click', () => { document.body.classList.remove('theme-purple','theme-black'); if (button.dataset.theme !== 'pink') document.body.classList.add(`theme-${button.dataset.theme}`); $$('.theme-dot').forEach(item => item.classList.remove('active')); button.classList.add('active'); localStorage.setItem('anriTheme', button.dataset.theme); }));
