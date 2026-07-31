@@ -205,6 +205,29 @@ jobData.dancer.levels[90] = {
   }
 };
 
+
+// Patch 7.5公式ジョブガイドを基準にした踊り子Lv100データ。
+// Lv92のラストダンス、Lv96のフィニシングムーブ、Lv100の暁の舞いを追加。
+jobData.dancer.levels[100] = {
+  requiredSkillsVerified: true,
+  sourcePatch: "7.5",
+  requiredSkills: [
+    ...jobData.dancer.levels[90].requiredSkills,
+    { id: "last-dance", name: "ラストダンス", level: 92, reason: "スタンダードフィニッシュまたはフィニシングムーブ後に1回使える強力な追撃。30秒以内に忘れず使う" },
+    { id: "finishing-move", name: "フィニシングムーブ", level: 96, reason: "フラリッシュ後にスタンダードステップが変化する即時フィニッシュ。2ステップを踏まずにスタンダードフィニッシュ効果を更新し、ラストダンスへつなげる" },
+    { id: "dance-of-the-dawn", name: "暁の舞い", level: 100, reason: "テクニカルフィニッシュ後に剣の舞いが変化する最終追撃。エスプリ50を使うため、発動前にゲージを確保する" }
+  ],
+  recommendedSkills: [
+    ...jobData.dancer.levels[90].recommendedSkills
+  ],
+  rotationSkillIds: {
+    single: ["closed-position", "cascade", "fountain", "reverse-cascade", "fountainfall", "standard-step", "last-dance", "fan-dance", "fan-dance-iii", "technical-step", "devilment", "flourish", "finishing-move", "saber-dance", "dance-of-the-dawn", "tillana", "fan-dance-iv", "starfall-dance"],
+    aoe: ["closed-position", "windmill", "bladeshower", "rising-windmill", "bloodshower", "standard-step", "last-dance", "fan-dance-ii", "fan-dance-iii", "technical-step", "devilment", "flourish", "finishing-move", "saber-dance", "dance-of-the-dawn", "tillana", "fan-dance-iv", "starfall-dance"],
+    opener: ["closed-position", "standard-step", "last-dance", "technical-step", "tillana", "dance-of-the-dawn", "devilment", "starfall-dance", "flourish", "finishing-move", "last-dance", "fan-dance-iv", "saber-dance", "fan-dance", "fan-dance-iii"],
+    burst: ["technical-step", "tillana", "dance-of-the-dawn", "devilment", "starfall-dance", "flourish", "finishing-move", "last-dance", "fan-dance-iv", "saber-dance", "fan-dance", "fan-dance-ii", "fan-dance-iii", "standard-step"]
+  }
+};
+
 const rotationData = {
   50: {
     single: {
@@ -529,6 +552,73 @@ const rotationData = {
         { name: "通常回しへ戻る", cue: "20秒後", icon: "Cascade.png", reason: "次の30秒スタンダード、60秒フラリッシュ、120秒テクニカルへ向けて通常回しを続けます。" }
       ],
       tip: "Lv90の2分は3つのセットで覚えると簡単。『テクニカル→ティラナ』『タンゴ→流星』『フラリッシュ→終』の後に、剣・Proc・扇を溢れない順で入れます♡"
+    }
+  }
+  ,
+  100: {
+    single: {
+      title: "単体 基本回し",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "クローズドポジション", cue: "戦闘前に確認", icon: "Closed_Position.png", reason: "火力役ひとりをダンスパートナーにします。付与済みなら押し直しません。" },
+        { name: "スタンダードステップ → ラストダンス", cue: "30秒ごと", icon: "Last_Dance.png", reason: "スタンダードフィニッシュ後にラストダンスが使えるようになります。30秒以内に使い、次のスタンダードまで持ち越さないようにします。" },
+        { name: "光っているProcを先に使う", cue: "上書き防止", icon: "Fountainfall.png", reason: "リバースカスケードとファウンテンフォールを先に消費し、基本技でProcを失わないようにします。" },
+        { name: "カスケード → ファウンテン", cue: "基本①→②", icon: "Cascade.png", reason: "Procがないときの単体基本コンボです。" },
+        { name: "扇の舞い【序】→【急】", cue: "羽と光を消費", icon: "Fan_Dance_III.png", reason: "幻扇を4枚で溢れさせず、【急】が光ったら期限内に使います。" },
+        { name: "剣の舞い", cue: "エスプリ50", icon: "Saber_Dance.png", reason: "通常時はエスプリ溢れ防止に使います。2分前は暁の舞い用の50を残します。" },
+        { name: "フラリッシュ → フィニシングムーブ", cue: "60秒ごと", icon: "Finishing_Move.png", reason: "Lv96からフラリッシュ後にスタンダードステップがフィニシングムーブへ変化。ステップなしで強い攻撃とバフ更新を行い、ラストダンスへつなげます。" },
+        { name: "テクニカル＋タンゴ", cue: "120秒ごと", icon: "Technical_Step.png", reason: "暁の舞い、ティラナ、流星の舞い、フィニシングムーブ、扇の舞い【終】をまとめるLv100の最大火力時間です。" }
+      ],
+      tip: "Lv100の普段の軸は『スタンダード後にラストダンス』『フラリッシュ後にフィニシングムーブ→ラストダンス』。2分前は暁の舞い用にエスプリ50を確保します♡"
+    },
+    aoe: {
+      title: "範囲 基本回し",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "敵が2体以上いるか確認", cue: "切替条件", icon: "Windmill.png", reason: "2体以上なら範囲コンボへ切り替えます。" },
+        { name: "スタンダードステップ → ラストダンス", cue: "30秒ごと", icon: "Last_Dance.png", reason: "どちらも複数の敵へ当たるため、範囲戦でも優先します。" },
+        { name: "範囲Procを先に使う", cue: "上書き防止", icon: "Bloodshower.png", reason: "ライジングウィンドミルとブラッドシャワーを先に消費します。" },
+        { name: "ウィンドミル → ブレードシャワー", cue: "範囲①→②", icon: "Bladeshower.png", reason: "Procがないときの範囲基本コンボです。" },
+        { name: "扇の舞い【破】→【急】", cue: "羽と光を消費", icon: "Fan_Dance_II.png", reason: "複数へ当てながら幻扇を消費し、【急】が光ったら続けて使います。" },
+        { name: "フラリッシュ → フィニシングムーブ → ラストダンス", cue: "60秒ごと", icon: "Finishing_Move.png", reason: "3つとも複数へ当たります。敵のまとまりを確認してまとめて当てます。" },
+        { name: "暁・ティラナ・流星・扇の舞い【終】", cue: "2分バースト", icon: "Dance_of_the_Dawn.png", reason: "Lv100の主力追撃はすべて範囲対応。直線・扇範囲は向きを合わせて全員へ当てます。" },
+        { name: "テクニカル＋タンゴ＋フラリッシュ", cue: "120秒ごと", icon: "Technical_Step.png", reason: "Lv100の追加技をまとめ、複数の敵へ最大火力を入れます。" }
+      ],
+      tip: "Lv100範囲は『スタンダード→ラスト』『フラリッシュ→フィニシング→ラスト』を追加。2分は暁の舞い用のエスプリ50を忘れず残します♡"
+    },
+    opener: {
+      title: "Lv100 ボス開幕",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "クローズドポジション確認", cue: "戦闘前", icon: "Closed_Position.png", reason: "ダンスパートナーが付いていることを確認します。" },
+        { name: "スタンダードステップ開始", cue: "戦闘前", icon: "Standard_Step.png", reason: "2ステップを先に踏み、戦闘開始へフィニッシュを合わせます。" },
+        { name: "スタンダードフィニッシュ → ラストダンス", cue: "戦闘開始", icon: "Last_Dance.png", reason: "初撃でバフを付け、追加されたラストダンスまで使います。" },
+        { name: "テクニカルステップ → 4手", cue: "すぐ開始", icon: "Technical_Step.png", reason: "表示どおり4ステップを踏み、パーティ全体の2分火力時間へ入ります。" },
+        { name: "テクニカルフィニッシュ → ティラナ", cue: "1組目", icon: "Tillana.png", reason: "テクニカル後の追撃でエスプリを増やします。" },
+        { name: "暁の舞い", cue: "エスプリ50", icon: "Dance_of_the_Dawn.png", reason: "Lv100の最重要追撃。テクニカルフィニッシュ後に剣の舞いが変化するため、エスプリ50を確保して使います。" },
+        { name: "攻めのタンゴ → 流星の舞い", cue: "2組目", icon: "Starfall_Dance.png", reason: "タンゴで流星の舞いが使えるようになります。" },
+        { name: "フラリッシュ → フィニシングムーブ → ラストダンス", cue: "3組目", icon: "Finishing_Move.png", reason: "フラリッシュ後の新しい連携。続けて扇の舞い【終】、Proc、剣の舞い、扇を溢れない順に使います。" }
+      ],
+      tip: "Lv100開幕は『スタンダード→ラスト』『テクニカル→ティラナ→暁』『タンゴ→流星』『フラリッシュ→フィニシング→ラスト』の4組で覚えます♡"
+    },
+    burst: {
+      title: "Lv100 2分バースト",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "エスプリ50以上と幻扇を準備", cue: "直前", icon: "Saber_Dance.png", reason: "暁の舞いにエスプリ50が必要です。上限で溢れない範囲でゲージと羽を残します。" },
+        { name: "テクニカルステップ → 4手", cue: "120秒ごと", icon: "Technical_Step.png", reason: "パーティ全体の2分バーストを開始します。" },
+        { name: "テクニカルフィニッシュ → ティラナ", cue: "1組目", icon: "Tillana.png", reason: "追撃しながらエスプリを増やします。" },
+        { name: "暁の舞い", cue: "最優先", icon: "Dance_of_the_Dawn.png", reason: "Lv100の強力な追撃。発動可能時間内かつエスプリ50以上で使います。" },
+        { name: "攻めのタンゴ → 流星の舞い", cue: "2組目", icon: "Starfall_Dance.png", reason: "確定クリティカル・ダイレクトヒットの流星をバフ中へ入れます。" },
+        { name: "フラリッシュ → フィニシングムーブ", cue: "3組目", icon: "Finishing_Move.png", reason: "ステップなしで強いフィニッシュを使い、スタンダードフィニッシュ効果を更新します。" },
+        { name: "ラストダンス → 扇の舞い【終】", cue: "続けて", icon: "Last_Dance.png", reason: "フィニシングムーブ後のラストダンスと、フラリッシュ後の【終】を期限内に消費します。" },
+        { name: "剣・Proc・扇を消費", cue: "残り時間", icon: "Fan_Dance_III.png", reason: "エスプリ、Proc、幻扇を溢れさせず、残りのバフ時間へ入れます。" }
+      ],
+      tip: "Lv100の2分は『テクニカル→ティラナ→暁』『タンゴ→流星』『フラリッシュ→フィニシング→ラスト→終』。暁用エスプリ50が最重要です♡"
     }
   }
 
