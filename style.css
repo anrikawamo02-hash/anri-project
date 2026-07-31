@@ -404,3 +404,33 @@ body.font-large { --base-font: 18px; }
   .hotbar-summary { align-items: stretch; flex-direction: column; }
   .hotbar-summary .demo-label { align-self: flex-start; }
 }
+
+/* Hotbar registration v5: complete SET1 (16 slots) */
+.hotbar-dialog { width: min(780px, calc(100% - 22px)); max-height: min(92vh, 900px); overflow-y: auto; }
+.dialog-lead { margin: 0 0 12px; color: var(--muted); }
+.registration-note { display: grid; gap: 3px; margin-bottom: 15px; padding: 11px 13px; border: 1px solid rgba(239,164,188,.35); border-radius: 12px; background: rgba(255,255,255,.035); color: var(--muted); font-size: .82rem; }
+.registration-note b { color: var(--pink-soft); }
+.hotbar-registration-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.registration-side { padding: 12px; border: 1px solid rgba(239,164,188,.34); border-radius: 15px; background: rgba(12,9,12,.62); }
+.registration-side h3 { margin: 0 0 10px; text-align: center; color: var(--pink-soft); }
+.slot-editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.slot-editor { display: grid; gap: 5px; padding: 8px; border: 1px solid rgba(239,164,188,.22); border-radius: 10px; background: rgba(255,255,255,.025); }
+.slot-editor label { color: var(--muted); font-size: .68rem; font-weight: 800; }
+.slot-editor select { width: 100%; min-width: 0; padding: 8px 7px; border: 1px solid rgba(239,164,188,.42); border-radius: 9px; color: var(--text); background: #160f15; font-size: .75rem; }
+.slot-editor select:focus-visible { outline: 3px solid var(--pink-soft); outline-offset: 2px; }
+.dialog-actions { display: grid; grid-template-columns: .8fr 1.2fr; gap: 9px; margin-top: 14px; }
+.dialog-actions .primary-btn { margin-top: 0; }
+.hotbar-set-title { display: flex; justify-content: space-between; align-items: center; margin: 10px 0 3px; color: var(--pink-soft); font-weight: 900; }
+.hotbar-set-title small { color: var(--muted); font-weight: 600; }
+.hotbar-side-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.hotbar-half { padding: 8px; border: 1px solid rgba(234,164,186,.30); border-radius: 11px; background: rgba(45,33,38,.34); }
+.hotbar-half h4 { margin: 0 0 7px; text-align: center; font-size: .76rem; color: var(--muted); }
+.hotbar-slot-list { display: grid; gap: 5px; }
+.hotbar-slot-row { display: grid; grid-template-columns: 30px 1fr; gap: 6px; align-items: center; min-height: 35px; padding: 4px 6px; border-radius: 8px; background: rgba(255,255,255,.035); }
+.hotbar-slot-key { display: grid; place-items: center; width: 28px; aspect-ratio: 1; border-radius: 7px; background: rgba(242,154,187,.18); color: var(--pink-soft); font-weight: 900; }
+.hotbar-slot-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .72rem; }
+
+@media (max-width: 620px) {
+  .hotbar-registration-grid, .hotbar-side-grid { grid-template-columns: 1fr; }
+  .slot-editor-grid { grid-template-columns: 1fr 1fr; }
+}

@@ -115,6 +115,24 @@
   </div>
 
   <dialog id="helpDialog"><button class="dialog-close" id="closeHelp" aria-label="閉じる">×</button><h2>アプリの使い方♡</h2><p>まずは踊り子を選び、スキル回し・ホットバー・ボス攻略を順番に練習します。</p><p>最終目標は、見て押すだけでなく、指と感覚で自然に回せること。</p><button class="primary-btn" id="startGuide">踊り子から始める</button></dialog>
+
+  <dialog id="hotbarDialog" class="hotbar-dialog">
+    <button class="dialog-close" id="closeHotbarDialog" aria-label="閉じる">×</button>
+    <h2>SET1を登録する♡</h2>
+    <p class="dialog-lead">クロスホットバー1セット分（L2側8枠＋R2側8枠）を登録します。今回は実物確認用の第一段階です。</p>
+    <div class="registration-note">
+      <b>登録する16枠</b>
+      <span>L2：方向キー4枠＋△□○×</span>
+      <span>R2：方向キー4枠＋△□○×</span>
+    </div>
+    <form id="hotbarForm">
+      <div id="hotbarRegistrationGrid" class="hotbar-registration-grid"></div>
+      <div class="dialog-actions">
+        <button type="button" class="ghost-btn" id="resetHotbarForm">見本に戻す</button>
+        <button type="submit" class="primary-btn">SET1を保存する</button>
+      </div>
+    </form>
+  </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
 </body>

@@ -31,22 +31,32 @@ const jobData = {
       current: [
         {
           id: "set1-l2",
+          set: "SET1",
           trigger: "L2",
           slots: {
-            up: { button: "△", skillId: "fountain", name: "ファウンテン" },
-            left: { button: "□", skillId: "cascade", name: "カスケード" },
-            right: { button: "○", skillId: "reverse-cascade", name: "リバース" },
-            down: { button: "×", skillId: "fountainfall", name: "フォール" }
+            dpadUp: { button: "↑", skillId: "standard-step", name: "スタンダードステップ" },
+            dpadLeft: { button: "←", skillId: "fan-dance", name: "扇の舞い【序】" },
+            dpadRight: { button: "→", skillId: "en-avant", name: "アン・アヴァン" },
+            dpadDown: { button: "↓", skillId: "second-wind", name: "内丹" },
+            faceUp: { button: "△", skillId: "fountain", name: "ファウンテン" },
+            faceLeft: { button: "□", skillId: "cascade", name: "カスケード" },
+            faceRight: { button: "○", skillId: "reverse-cascade", name: "リバースカスケード" },
+            faceDown: { button: "×", skillId: "fountainfall", name: "ファウンテンフォール" }
           }
         },
         {
           id: "set1-r2",
+          set: "SET1",
           trigger: "R2",
           slots: {
-            up: { button: "△", skillId: "saber-dance", name: "サベッジ" },
-            left: { button: "□", skillId: "bladeshower", name: "シャワー" },
-            right: { button: "○", skillId: "flourish", name: "フラリッシュ" },
-            down: { button: "×", skillId: "technical-step", name: "テクニカル" }
+            dpadUp: { button: "↑", skillId: "peloton", name: "プロトン" },
+            dpadLeft: { button: "←", skillId: "head-graze", name: "ヘッドグレイズ" },
+            dpadRight: { button: "→", skillId: "arms-length", name: "アームズレングス" },
+            dpadDown: { button: "↓", skillId: "fan-dance-ii", name: "扇の舞い【破】" },
+            faceUp: { button: "△", skillId: "bladeshower", name: "ブレードシャワー" },
+            faceLeft: { button: "□", skillId: "windmill", name: "ウィンドミル" },
+            faceRight: { button: "○", skillId: "rising-windmill", name: "ライジングウィンドミル" },
+            faceDown: { button: "×", skillId: "bloodshower", name: "ブラッドシャワー" }
           }
         }
       ],
@@ -196,14 +206,23 @@ function renderLevelOptions() {
 }
 
 function renderHotbarSet(set) {
-  const positions = ["up", "left", "right", "down"];
-  const buttons = positions.map(position => {
-    const slot = set.slots?.[position];
-    return slot
-      ? `<button class="skill ${position}" data-skill-id="${slot.skillId}">${slot.button}<small>${slot.name}</small></button>`
-      : `<button class="skill ${position} is-empty" disabled>—<small>空き</small></button>`;
+  const directionSlots = ["dpadUp", "dpadLeft", "dpadRight", "dpadDown"];
+  const faceSlots = ["faceUp", "faceLeft", "faceRight", "faceDown"];
+  const renderRows = keys => keys.map(key => {
+    const slot = set.slots?.[key];
+    return `<div class="hotbar-slot-row">
+      <span class="hotbar-slot-key">${slot?.button || "—"}</span>
+      <span class="hotbar-slot-name">${slot?.name || "空き"}</span>
+    </div>`;
   }).join("");
-  return `<div class="hotbar-set"><div class="trigger-label">${set.trigger}</div><div class="cross-pad" aria-label="${set.trigger}側ホットバー">${buttons}</div></div>`;
+
+  return `<div class="hotbar-set">
+    <div class="hotbar-set-title"><span>${set.set || "SET1"}・${set.trigger}</span><small>8枠</small></div>
+    <div class="hotbar-side-grid">
+      <div class="hotbar-half"><h4>方向キー側</h4><div class="hotbar-slot-list">${renderRows(directionSlots)}</div></div>
+      <div class="hotbar-half"><h4>△□○×側</h4><div class="hotbar-slot-list">${renderRows(faceSlots)}</div></div>
+    </div>
+  </div>`;
 }
 
 function renderDiagnosis(job, levelData, sets) {
@@ -280,6 +299,76 @@ function showToast(message) {
 }
 function scrollToTarget(id) { document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }); }
 
+
+const HOTBAR_SLOT_META = [
+  ["dpadUp", "方向キー ↑", "↑"], ["dpadLeft", "方向キー ←", "←"],
+  ["dpadRight", "方向キー →", "→"], ["dpadDown", "方向キー ↓", "↓"],
+  ["faceUp", "ボタン △", "△"], ["faceLeft", "ボタン □", "□"],
+  ["faceRight", "ボタン ○", "○"], ["faceDown", "ボタン ×", "×"]
+];
+
+function getSkillOptions() {
+  const levelData = getSelectedLevelData();
+  const skills = [...levelData.requiredSkills, ...levelData.recommendedSkills];
+  const unique = [...new Map(skills.map(skill => [skill.id, skill])).values()];
+  return [{ id: "", name: "未設定" }, ...unique];
+}
+
+function findCurrentSet(trigger) {
+  return getSelectedJob().hotbar.current.find(set => set.id === `set1-${trigger.toLowerCase()}`);
+}
+
+function renderRegistrationForm() {
+  const options = getSkillOptions();
+  const renderSide = trigger => {
+    const set = findCurrentSet(trigger);
+    const editors = HOTBAR_SLOT_META.map(([key, label]) => {
+      const selectedId = set?.slots?.[key]?.skillId || "";
+      const optionHtml = options.map(skill => `<option value="${skill.id}"${skill.id === selectedId ? " selected" : ""}>${skill.name}</option>`).join("");
+      return `<div class="slot-editor"><label for="slot-${trigger}-${key}">${label}</label><select id="slot-${trigger}-${key}" data-trigger="${trigger}" data-slot-key="${key}">${optionHtml}</select></div>`;
+    }).join("");
+    return `<section class="registration-side"><h3>${trigger}側・8枠</h3><div class="slot-editor-grid">${editors}</div></section>`;
+  };
+  $("#hotbarRegistrationGrid").innerHTML = renderSide("L2") + renderSide("R2");
+}
+
+function openHotbarRegistration() {
+  if (selectedJob !== "dancer") {
+    showToast("このジョブの登録画面はまだ準備前です♡");
+    return;
+  }
+  renderRegistrationForm();
+  $("#hotbarDialog").showModal();
+}
+
+function saveHotbarRegistration() {
+  const options = getSkillOptions();
+  const skillMap = new Map(options.map(skill => [skill.id, skill]));
+  ["L2", "R2"].forEach(trigger => {
+    const set = findCurrentSet(trigger);
+    HOTBAR_SLOT_META.forEach(([key, , button]) => {
+      const select = $(`#slot-${trigger}-${key}`);
+      const skill = skillMap.get(select.value);
+      set.slots[key] = skill?.id ? { button, skillId: skill.id, name: skill.name } : { button, skillId: "", name: "空き" };
+    });
+  });
+  localStorage.setItem(`anriHotbar-${selectedJob}-set1`, JSON.stringify(getSelectedJob().hotbar.current));
+  $("#hotbarDialog").close();
+  selectedHotbarView = "current";
+  $$('#hotbar .tab').forEach(item => item.classList.toggle('active', item.dataset.hotbarView === 'current'));
+  renderHotbar();
+  showToast("SET1の16枠を保存しました♡");
+}
+
+function restoreSavedHotbar() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(`anriHotbar-dancer-set1`));
+    if (Array.isArray(saved) && saved.length === 2) jobData.dancer.hotbar.current = saved;
+  } catch (error) {
+    console.warn("保存済みホットバーを読み込めませんでした", error);
+  }
+}
+
 $$('[data-target]').forEach(button => button.addEventListener('click', () => scrollToTarget(button.dataset.target)));
 $$('.main-nav .nav-pill').forEach(button => button.addEventListener('click', () => { $$('.main-nav .nav-pill').forEach(item => item.classList.remove('active')); button.classList.add('active'); }));
 $$('[data-toast]').forEach(button => button.addEventListener('click', () => showToast(button.dataset.toast)));
@@ -288,7 +377,12 @@ $$('[data-boss]').forEach(button => button.addEventListener('click', () => { $$(
 $$('[data-hotbar-view]').forEach(button => button.addEventListener('click', () => { $$('#hotbar .tab').forEach(item => item.classList.remove('active')); button.classList.add('active'); selectedHotbarView = button.dataset.hotbarView; renderHotbar(); }));
 $$('.job-card').forEach(button => button.addEventListener('click', () => selectJob(button.dataset.job)));
 $("#hotbarLevel").addEventListener("change", event => { selectedLevel = Number(event.target.value); renderHotbar(); });
-$("#registerHotbar").addEventListener("click", () => showToast("次の作業で、杏里の実際の全ホットバーを登録できる入力画面につなげます♡"));
+$("#registerHotbar").addEventListener("click", openHotbarRegistration);
+
+$("#closeHotbarDialog").addEventListener("click", () => $("#hotbarDialog").close());
+$("#hotbarForm").addEventListener("submit", event => { event.preventDefault(); saveHotbarRegistration(); });
+$("#resetHotbarForm").addEventListener("click", () => { localStorage.removeItem(`anriHotbar-${selectedJob}-set1`); location.reload(); });
+$("#hotbarDialog").addEventListener("click", event => { if (event.target === $("#hotbarDialog")) $("#hotbarDialog").close(); });
 
 $$('[data-theme]').forEach(button => button.addEventListener('click', () => { document.body.classList.remove('theme-purple','theme-black'); if (button.dataset.theme !== 'pink') document.body.classList.add(`theme-${button.dataset.theme}`); $$('.theme-dot').forEach(item => item.classList.remove('active')); button.classList.add('active'); localStorage.setItem('anriTheme', button.dataset.theme); }));
 $$('[data-font]').forEach(button => button.addEventListener('click', () => { document.body.classList.remove('font-small','font-large'); if (button.dataset.font !== 'medium') document.body.classList.add(`font-${button.dataset.font}`); $$('.font-buttons button').forEach(item => item.classList.remove('active')); button.classList.add('active'); localStorage.setItem('anriFont', button.dataset.font); }));
@@ -309,6 +403,7 @@ function restoreSettings() {
   document.body.classList.toggle('no-sparkle', !sparkle);
 }
 
+restoreSavedHotbar();
 renderRotation('single');
 renderBoss('mechanic');
 renderLevelOptions();
