@@ -113,6 +113,29 @@ jobData.dancer.levels[50] = {
   }
 };
 
+
+// Patch 7.5公式ジョブガイドを基準にした踊り子Lv60データ。
+// Lv50の攻撃回しに、Lv52の癒やしのワルツ、Lv56の守りのサンバ、Lv60のクローズドポジションを追加。
+jobData.dancer.levels[60] = {
+  requiredSkillsVerified: true,
+  sourcePatch: "7.5",
+  requiredSkills: [
+    ...jobData.dancer.levels[50].requiredSkills,
+    { id: "curing-waltz", name: "癒やしのワルツ", level: 52, reason: "自分と周囲を回復し、ダンスパートナー側からも回復を発生させる" },
+    { id: "shield-samba", name: "守りのサンバ", level: 56, reason: "全体攻撃に合わせてパーティの被ダメージを軽減する" },
+    { id: "closed-position", name: "クローズドポジション", level: 60, reason: "ダンスパートナーを選び、スタンダードフィニッシュなどの効果を共有する" }
+  ],
+  recommendedSkills: [
+    ...jobData.dancer.levels[50].recommendedSkills
+  ],
+  rotationSkillIds: {
+    single: ["closed-position", "cascade", "fountain", "reverse-cascade", "fountainfall", "standard-step", "fan-dance"],
+    aoe: ["closed-position", "windmill", "bladeshower", "rising-windmill", "bloodshower", "standard-step", "fan-dance-ii"],
+    opener: ["closed-position", "standard-step", "cascade", "fountain", "reverse-cascade", "fountainfall", "fan-dance"],
+    burst: ["closed-position", "standard-step", "fan-dance"]
+  }
+};
+
 const rotationData = {
   50: {
     single: {
@@ -173,6 +196,70 @@ const rotationData = {
         { name: "通常回しへ戻る", cue: "くり返し", icon: "Cascade.png", reason: "次の30秒スタンダードステップまで、単体または範囲の基本回しを続けます。" }
       ],
       tip: "Lv50には独立した大きなバーストボタンがまだ少ないため、『スタンダードステップを遅らせない・Procを失わない・羽を溢れさせない』の3つが火力の基本です♡"
+    }
+  },
+  60: {
+    single: {
+      title: "単体 基本回し",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "クローズドポジション", cue: "戦闘前に1回", icon: "Closed_Position.png", reason: "パーティ内の火力役ひとりをダンスパートナーにします。効果は永続なので、戦闘ごとに押し直す必要はありません。" },
+        { name: "スタンダードステップ", cue: "30秒ごと", icon: "Standard_Step.png", reason: "2つのステップを踏んでフィニッシュ。Lv60では自分だけでなく、ダンスパートナーにも与ダメージ上昇を共有します。" },
+        { name: "Procが光っているか確認", cue: "先に確認", icon: "Reverse_Cascade.png", reason: "光っている技を先に使い、次の基本技でProcを上書きする事故を防ぎます。" },
+        { name: "カスケード", cue: "基本①", icon: "Cascade.png", reason: "単体コンボの開始。対称投擲Procが付いたら次のカスケードより先に消費します。" },
+        { name: "リバースカスケード", cue: "光ったら", icon: "Reverse_Cascade.png", reason: "対称投擲Procを消費し、幻扇が増える可能性があります。" },
+        { name: "ファウンテン", cue: "基本②", icon: "Fountain.png", reason: "カスケードからつなぐ2段目。非対称投擲Procが付く可能性があります。" },
+        { name: "ファウンテンフォール", cue: "光ったら", icon: "Fountainfall.png", reason: "非対称投擲Procを消費し、幻扇が増える可能性があります。" },
+        { name: "扇の舞い【序】", cue: "羽4枚前", icon: "Fan_Dance.png", reason: "幻扇が溢れないように単体用の扇で消費します。" }
+      ],
+      tip: "Lv50の回しはそのまま。Lv60で一番大きく増えるのは『戦闘前にパートナーを選ぶ』ことです。あとはスタンダードステップを30秒ごとに続ければOKです♡"
+    },
+    aoe: {
+      title: "範囲 基本回し",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "クローズドポジション", cue: "戦闘前に1回", icon: "Closed_Position.png", reason: "ダンスパートナーを選びます。範囲戦でもスタンダードフィニッシュの効果を共有できます。" },
+        { name: "敵が2体以上いるか確認", cue: "切替条件", icon: "Windmill.png", reason: "Lv60でも2体以上なら範囲コンボへ切り替えます。" },
+        { name: "スタンダードステップ", cue: "30秒ごと", icon: "Standard_Step.png", reason: "範囲でも最優先。ダンスパートナーにも与ダメージ上昇を共有します。" },
+        { name: "Procが光っているか確認", cue: "先に確認", icon: "Rising_Windmill.png", reason: "光った範囲Procを先に消費して上書きを防ぎます。" },
+        { name: "ウィンドミル", cue: "範囲①", icon: "Windmill.png", reason: "範囲コンボの開始です。" },
+        { name: "ライジングウィンドミル", cue: "光ったら", icon: "Rising_Windmill.png", reason: "対称投擲Procの範囲攻撃です。" },
+        { name: "ブレードシャワー", cue: "範囲②", icon: "Bladeshower.png", reason: "ウィンドミルからつなぐ2段目です。" },
+        { name: "ブラッドシャワー", cue: "光ったら", icon: "Bloodshower.png", reason: "非対称投擲Procの範囲攻撃です。" },
+        { name: "扇の舞い【破】", cue: "羽4枚前", icon: "Fan_Dance_II.png", reason: "複数の敵に当てながら幻扇を消費します。" }
+      ],
+      tip: "Lv60でも範囲回しの順番はLv50と同じ。クローズドポジションを事前に付け、スタンダードステップを遅らせないことを追加で意識します♡"
+    },
+    opener: {
+      title: "Lv60 ボス開幕",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "クローズドポジション", cue: "戦闘前", icon: "Closed_Position.png", reason: "パーティの火力役ひとりをダンスパートナーにします。付与済みなら押し直し不要です。" },
+        { name: "スタンダードステップ開始", cue: "約-15秒以内", icon: "Standard_Step.png", reason: "戦闘前にダンスを始め、攻撃しない2つのステップを先に済ませます。" },
+        { name: "表示された1つ目のステップ", cue: "準備", icon: "Emboite.png", reason: "画面に表示された色・記号と同じステップを押します。" },
+        { name: "表示された2つ目のステップ", cue: "準備", icon: "Entrechat.png", reason: "2つ目も表示どおりに押します。" },
+        { name: "スタンダードフィニッシュ", cue: "戦闘開始", icon: "Standard_Finish.png", reason: "ボスを攻撃できる瞬間に合わせ、自分とパートナーの与ダメージ上昇を開始します。" },
+        { name: "Proc優先の単体基本回し", cue: "その後", icon: "Cascade.png", reason: "光ったProcを先に使いながら1→3→2→4へ移ります。" },
+        { name: "扇の舞い【序】", cue: "羽4枚前", icon: "Fan_Dance.png", reason: "幻扇を溢れさせないように挟みます。" }
+      ],
+      tip: "Lv60開幕の新しい一手は『最初にダンスパートナーを選ぶ』だけ。攻めのタンゴはLv62なので、Lv60ではまだ使いません♡"
+    },
+    burst: {
+      title: "Lv60 火力と支援のタイミング",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "クローズドポジション確認", cue: "常時", icon: "Closed_Position.png", reason: "パートナーが付いている状態を保ち、スタンダードフィニッシュの効果を共有します。" },
+        { name: "スタンダードステップ", cue: "30秒ごと", icon: "Standard_Step.png", reason: "Lv60でも火力の中心。遅らせず使います。" },
+        { name: "スタンダードフィニッシュ", cue: "強い一撃", icon: "Standard_Finish.png", reason: "自分とパートナーの与ダメージ上昇を更新します。" },
+        { name: "守りのサンバ", cue: "全体攻撃前", icon: "Shield_Samba.png", reason: "ボスの強い全体攻撃が来る前に使い、パーティの被ダメージを軽減します。火力技ではなく支援技です。" },
+        { name: "癒やしのワルツ", cue: "被弾後", icon: "Curing_Waltz.png", reason: "自分と周囲を回復。パートナーと重なって使うと、パートナー側からも回復が発生して効果を活かしやすくなります。" },
+        { name: "通常回しへ戻る", cue: "くり返し", icon: "Cascade.png", reason: "次のスタンダードステップまでProc優先の基本回しを続けます。" }
+      ],
+      tip: "Lv60では大きな攻撃バフはまだありません。火力はスタンダードステップ、支援は全体攻撃前のサンバと被弾後のワルツ、と役割を分けて覚えます♡"
     }
   }
 };
