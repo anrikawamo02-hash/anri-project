@@ -182,6 +182,29 @@ jobData.dancer.levels[80] = {
   }
 };
 
+
+// Patch 7.5公式ジョブガイドを基準にした踊り子Lv90データ。
+// Lv82のティラナ、Lv86の扇の舞い【終】、Lv90の流星の舞いを追加。
+jobData.dancer.levels[90] = {
+  requiredSkillsVerified: true,
+  sourcePatch: "7.5",
+  requiredSkills: [
+    ...jobData.dancer.levels[80].requiredSkills,
+    { id: "tillana", name: "ティラナ", level: 82, reason: "テクニカルフィニッシュ成功後に1回使える追撃。エスプリを50増やし、2分バースト中の剣の舞いへつなげる" },
+    { id: "fan-dance-iv", name: "扇の舞い【終】", level: 86, reason: "フラリッシュ使用後に1回使える強い前方扇範囲アビリティ。2分バースト中に忘れず消費する" },
+    { id: "starfall-dance", name: "流星の舞い", level: 90, reason: "攻めのタンゴ使用後に1回使える確定クリティカル・ダイレクトヒットの強力な直線範囲攻撃" }
+  ],
+  recommendedSkills: [
+    ...jobData.dancer.levels[80].recommendedSkills
+  ],
+  rotationSkillIds: {
+    single: ["closed-position", "cascade", "fountain", "reverse-cascade", "fountainfall", "standard-step", "fan-dance", "fan-dance-iii", "technical-step", "devilment", "flourish", "saber-dance", "tillana", "fan-dance-iv", "starfall-dance"],
+    aoe: ["closed-position", "windmill", "bladeshower", "rising-windmill", "bloodshower", "standard-step", "fan-dance-ii", "fan-dance-iii", "technical-step", "devilment", "flourish", "saber-dance", "tillana", "fan-dance-iv", "starfall-dance"],
+    opener: ["closed-position", "standard-step", "technical-step", "tillana", "devilment", "starfall-dance", "flourish", "fan-dance-iv", "saber-dance", "fan-dance", "fan-dance-iii"],
+    burst: ["technical-step", "tillana", "devilment", "starfall-dance", "flourish", "fan-dance-iv", "saber-dance", "fan-dance", "fan-dance-ii", "fan-dance-iii", "standard-step"]
+  }
+};
+
 const rotationData = {
   50: {
     single: {
@@ -441,6 +464,74 @@ const rotationData = {
       tip: "Lv80の2分は『テクニカル → タンゴ → フラリッシュ』へ、剣の舞い・Proc・扇を集める形。インプロは攻撃用ではなく支援用です♡"
     }
   }
+  ,
+  90: {
+    single: {
+      title: "単体 基本回し",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "クローズドポジション", cue: "戦闘前に確認", icon: "Closed_Position.png", reason: "火力役ひとりをダンスパートナーにします。付与済みなら押し直しません。" },
+        { name: "スタンダードステップ", cue: "30秒ごと", icon: "Standard_Step.png", reason: "自分とパートナーの与ダメージ上昇を維持するため、通常コンボより優先します。" },
+        { name: "光っているProcを先に使う", cue: "上書き防止", icon: "Fountainfall.png", reason: "リバースカスケードとファウンテンフォールを先に消費し、基本技でProcを失わないようにします。" },
+        { name: "カスケード → ファウンテン", cue: "基本①→②", icon: "Cascade.png", reason: "Procがないときの単体基本コンボです。" },
+        { name: "扇の舞い【序】→【急】", cue: "羽と光を消費", icon: "Fan_Dance_III.png", reason: "幻扇を4枚で溢れさせず、【急】が光ったら期限内に使います。" },
+        { name: "剣の舞い", cue: "エスプリ50", icon: "Saber_Dance.png", reason: "エスプリが上限へ近づいたら溢れる前に使い、できるだけ2分バーストへ残します。" },
+        { name: "フラリッシュ", cue: "60秒ごと", icon: "Flourish.png", reason: "Procと扇の舞い【終】をまとめて発生させます。光った技を期限内に消費します。" },
+        { name: "テクニカル＋タンゴ", cue: "120秒ごと", icon: "Technical_Step.png", reason: "ティラナ、流星の舞い、扇の舞い【終】、剣の舞いをまとめるLv90の大きな火力時間です。" }
+      ],
+      tip: "Lv90では普段の回しはLv80と同じ。2分になったら『テクニカル後のティラナ』『タンゴ後の流星』『フラリッシュ後の扇の舞い【終】』を忘れないことが新しいポイントです♡"
+    },
+    aoe: {
+      title: "範囲 基本回し",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "敵が2体以上いるか確認", cue: "切替条件", icon: "Windmill.png", reason: "2体以上なら範囲コンボへ切り替えます。" },
+        { name: "スタンダードステップ", cue: "30秒ごと", icon: "Standard_Step.png", reason: "複数相手でも優先し、フィニッシュを周囲へ当てます。" },
+        { name: "範囲Procを先に使う", cue: "上書き防止", icon: "Bloodshower.png", reason: "ライジングウィンドミルとブラッドシャワーを先に消費します。" },
+        { name: "ウィンドミル → ブレードシャワー", cue: "範囲①→②", icon: "Bladeshower.png", reason: "Procがないときの範囲基本コンボです。" },
+        { name: "扇の舞い【破】→【急】", cue: "羽と光を消費", icon: "Fan_Dance_II.png", reason: "複数へ当てながら幻扇を消費し、【急】が光ったら続けて使います。" },
+        { name: "剣の舞い", cue: "エスプリ50", icon: "Saber_Dance.png", reason: "対象と周囲へ当たるため、範囲戦でもゲージ消費の中心です。" },
+        { name: "ティラナ・流星・扇の舞い【終】", cue: "発動可になったら", icon: "Tillana.png", reason: "3つとも複数へ当たる強い追撃です。2分バースト中は敵を巻き込める向きと位置を確認します。" },
+        { name: "テクニカル＋タンゴ＋フラリッシュ", cue: "120秒ごと", icon: "Technical_Step.png", reason: "Lv90の追加技をまとめて、複数の敵へ大きな範囲ダメージを入れます。" }
+      ],
+      tip: "Lv90範囲はLv80の範囲回しに、ティラナ・扇の舞い【終】・流星の舞いが追加。前方範囲技は敵の向きを見て全員へ当てます♡"
+    },
+    opener: {
+      title: "Lv90 ボス開幕",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "クローズドポジション確認", cue: "戦闘前", icon: "Closed_Position.png", reason: "ダンスパートナーが付いていることを確認します。" },
+        { name: "スタンダードステップ開始", cue: "戦闘前", icon: "Standard_Step.png", reason: "2ステップを先に踏み、戦闘開始へフィニッシュを合わせます。" },
+        { name: "スタンダードフィニッシュ", cue: "戦闘開始", icon: "Standard_Finish.png", reason: "初撃と同時に自分とパートナーの与ダメージ上昇を開始します。" },
+        { name: "テクニカルステップ → 4手", cue: "すぐ開始", icon: "Technical_Step.png", reason: "表示どおり4ステップを踏み、パーティ全体の2分火力時間へ入ります。" },
+        { name: "テクニカルフィニッシュ", cue: "4手後", icon: "Technical_Finish.png", reason: "強い範囲攻撃とパーティ全体への与ダメージ上昇を付与します。" },
+        { name: "ティラナ", cue: "フィニッシュ後", icon: "Tillana.png", reason: "テクニカルフィニッシュ後だけ使える追撃。エスプリを50増やし、次の強い技へつなげます。" },
+        { name: "攻めのタンゴ → 流星の舞い", cue: "バフ中", icon: "Starfall_Dance.png", reason: "タンゴで流星の舞いが使えるようになります。確定クリティカル・ダイレクトヒットをバフ中に入れます。" },
+        { name: "フラリッシュ → 扇の舞い【終】", cue: "続けて", icon: "Fan_Dance_IV.png", reason: "フラリッシュで【終】が使えるようになります。Proc、剣の舞い、扇も溢れない順に続けます。" }
+      ],
+      tip: "Lv90開幕の目印は『テクニカル → ティラナ』『タンゴ → 流星』『フラリッシュ → 扇の舞い【終】』。3組をセットで覚えると迷いにくいです♡"
+    },
+    burst: {
+      title: "Lv90 2分バースト",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "エスプリと幻扇を準備", cue: "直前", icon: "Saber_Dance.png", reason: "上限で溢れない範囲でゲージと羽を残し、2分バフへ強い技を集めます。" },
+        { name: "テクニカルステップ → 4手", cue: "120秒ごと", icon: "Technical_Step.png", reason: "パーティ全体の2分バーストを開始します。" },
+        { name: "テクニカルフィニッシュ → ティラナ", cue: "1組目", icon: "Tillana.png", reason: "フィニッシュ後のティラナで追撃し、エスプリを50増やします。" },
+        { name: "攻めのタンゴ → 流星の舞い", cue: "2組目", icon: "Starfall_Dance.png", reason: "タンゴの効果中に、確定クリティカル・ダイレクトヒットの流星の舞いを使います。" },
+        { name: "フラリッシュ → 扇の舞い【終】", cue: "3組目", icon: "Fan_Dance_IV.png", reason: "フラリッシュで得た【終】を使い、同時に発生したProcも期限内に消費します。" },
+        { name: "剣の舞い", cue: "エスプリ50ごと", icon: "Saber_Dance.png", reason: "ティラナで増えた分を含め、エスプリを溢れさせずバフ中へ入れます。" },
+        { name: "Procと扇を消費", cue: "残り時間", icon: "Fan_Dance_III.png", reason: "光ったProc、幻扇、扇の舞い【急】を期限と上限に注意して使います。" },
+        { name: "通常回しへ戻る", cue: "20秒後", icon: "Cascade.png", reason: "次の30秒スタンダード、60秒フラリッシュ、120秒テクニカルへ向けて通常回しを続けます。" }
+      ],
+      tip: "Lv90の2分は3つのセットで覚えると簡単。『テクニカル→ティラナ』『タンゴ→流星』『フラリッシュ→終』の後に、剣・Proc・扇を溢れない順で入れます♡"
+    }
+  }
+
 
 };
 
