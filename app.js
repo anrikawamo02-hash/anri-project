@@ -159,6 +159,29 @@ jobData.dancer.levels[70] = {
   }
 };
 
+
+// Patch 7.5公式ジョブガイドを基準にした踊り子Lv80データ。
+// Lv72のフラリッシュ、Lv76のエスプリ／剣の舞い、Lv80のインプロビゼーションを追加。
+jobData.dancer.levels[80] = {
+  requiredSkillsVerified: true,
+  sourcePatch: "7.5",
+  requiredSkills: [
+    ...jobData.dancer.levels[70].requiredSkills,
+    { id: "flourish", name: "フラリッシュ", level: 72, reason: "60秒ごとに単体・範囲のProcと扇の舞い【急】をまとめて発生させ、バースト中の手数を増やす" },
+    { id: "saber-dance", name: "剣の舞い", level: 76, reason: "エスプリ50を消費する高威力攻撃。ゲージを溢れさせず、できるだけバースト中に使う" },
+    { id: "improvisation", name: "インプロビゼーション", level: 80, reason: "攻撃できない時間や全体攻撃前に、継続回復とバリアでパーティを支援する" }
+  ],
+  recommendedSkills: [
+    ...jobData.dancer.levels[70].recommendedSkills
+  ],
+  rotationSkillIds: {
+    single: ["closed-position", "cascade", "fountain", "reverse-cascade", "fountainfall", "standard-step", "fan-dance", "fan-dance-iii", "technical-step", "devilment", "flourish", "saber-dance"],
+    aoe: ["closed-position", "windmill", "bladeshower", "rising-windmill", "bloodshower", "standard-step", "fan-dance-ii", "fan-dance-iii", "technical-step", "devilment", "flourish", "saber-dance"],
+    opener: ["closed-position", "standard-step", "technical-step", "devilment", "flourish", "saber-dance", "fan-dance", "fan-dance-iii"],
+    burst: ["technical-step", "devilment", "flourish", "saber-dance", "fan-dance", "fan-dance-ii", "fan-dance-iii", "standard-step"]
+  }
+};
+
 const rotationData = {
   50: {
     single: {
@@ -351,6 +374,74 @@ const rotationData = {
       tip: "覚える合図は『2分になったらテクニカル → 4手 → フィニッシュ → タンゴ』。その20秒に光ったProcと扇を入れればOKです♡"
     }
   }
+  ,
+  80: {
+    single: {
+      title: "単体 基本回し",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "クローズドポジション", cue: "戦闘前に確認", icon: "Closed_Position.png", reason: "火力役ひとりをダンスパートナーにします。付与済みなら押し直しません。" },
+        { name: "スタンダードステップ", cue: "30秒ごと", icon: "Standard_Step.png", reason: "自分とパートナーの与ダメージ上昇を維持するため、基本回しより優先します。" },
+        { name: "光っているProcを先に使う", cue: "上書き防止", icon: "Fountainfall.png", reason: "リバースカスケードとファウンテンフォールを先に消費し、次の基本技でProcを失わないようにします。" },
+        { name: "カスケード → ファウンテン", cue: "基本①→②", icon: "Cascade.png", reason: "Procがないときの単体基本コンボです。" },
+        { name: "扇の舞い【序】→【急】", cue: "羽と光を消費", icon: "Fan_Dance_III.png", reason: "幻扇を4枚で溢れさせず、【急】が光ったら期限内に使います。" },
+        { name: "剣の舞い", cue: "エスプリ50", icon: "Saber_Dance.png", reason: "エスプリを50消費する強い攻撃です。ゲージが100へ近づいたら、バースト外でも溢れる前に使います。" },
+        { name: "フラリッシュ", cue: "60秒ごと", icon: "Flourish.png", reason: "戦闘中に使うと複数のProcをまとめて作ります。光った技を順番に使い、上書きしないようにします。" },
+        { name: "テクニカル＋攻めのタンゴ", cue: "120秒ごと", icon: "Technical_Step.png", reason: "2分ごとの大きな火力時間。フラリッシュ、剣の舞い、扇をこの時間へ集めます。" }
+      ],
+      tip: "Lv80の新しい柱は『60秒ごとのフラリッシュ』と『エスプリ50で剣の舞い』。普段のProc優先は変えず、2分ではテクニカル＋タンゴへ強い技をまとめます♡"
+    },
+    aoe: {
+      title: "範囲 基本回し",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "敵が2体以上いるか確認", cue: "切替条件", icon: "Windmill.png", reason: "2体以上なら範囲コンボへ切り替えます。" },
+        { name: "スタンダードステップ", cue: "30秒ごと", icon: "Standard_Step.png", reason: "複数相手でも優先。フィニッシュを周囲へ当てます。" },
+        { name: "光っている範囲Procを先に使う", cue: "上書き防止", icon: "Bloodshower.png", reason: "ライジングウィンドミルとブラッドシャワーを先に消費します。" },
+        { name: "ウィンドミル → ブレードシャワー", cue: "範囲①→②", icon: "Bladeshower.png", reason: "Procがないときの範囲基本コンボです。" },
+        { name: "扇の舞い【破】→【急】", cue: "羽と光を消費", icon: "Fan_Dance_II.png", reason: "複数の敵へ当てながら幻扇を消費し、【急】が光ったら続けて使います。" },
+        { name: "剣の舞い", cue: "エスプリ50", icon: "Saber_Dance.png", reason: "対象と周囲へ当たるため、単体・範囲のどちらでも使える強い攻撃です。" },
+        { name: "フラリッシュ", cue: "60秒ごと", icon: "Flourish.png", reason: "範囲Procもまとめて得られます。敵の近くでライジング／ブラッドシャワーを当てます。" },
+        { name: "テクニカル＋攻めのタンゴ", cue: "120秒ごと", icon: "Technical_Step.png", reason: "複数相手でも2分バーストをまとめ、強い範囲攻撃を集中させます。" }
+      ],
+      tip: "Lv80範囲は『範囲Proc優先＋剣の舞い』。フラリッシュで光った単体Procではなく、敵が複数なら範囲Procを選んで当てる意識が大切です♡"
+    },
+    opener: {
+      title: "Lv80 ボス開幕",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "クローズドポジション確認", cue: "戦闘前", icon: "Closed_Position.png", reason: "ダンスパートナーが付いていることを確認します。" },
+        { name: "スタンダードステップ開始", cue: "戦闘前", icon: "Standard_Step.png", reason: "2ステップを先に踏み、戦闘開始へフィニッシュを合わせます。" },
+        { name: "スタンダードフィニッシュ", cue: "戦闘開始", icon: "Standard_Finish.png", reason: "初撃と同時に、自分とパートナーの与ダメージ上昇を開始します。" },
+        { name: "テクニカルステップ → 4手", cue: "すぐ開始", icon: "Technical_Step.png", reason: "表示どおり4ステップを踏み、パーティ全体の火力時間へ入ります。" },
+        { name: "テクニカルフィニッシュ", cue: "4手後", icon: "Technical_Finish.png", reason: "パーティ全体へ20秒間の与ダメージ上昇を付与します。" },
+        { name: "攻めのタンゴ", cue: "フィニッシュ直後", icon: "Devilment.png", reason: "自分とパートナーのクリティカル・ダイレクトヒット率を上げます。" },
+        { name: "フラリッシュ", cue: "バフ中", icon: "Flourish.png", reason: "Procをまとめて発生させ、テクニカルとタンゴの効果中に消費します。" },
+        { name: "剣の舞い・Proc・扇", cue: "溢れない順", icon: "Saber_Dance.png", reason: "エスプリや幻扇を溢れさせないことを優先しながら、光った技をバフ中へ入れます。" }
+      ],
+      tip: "Lv80開幕は『スタンダード → テクニカル4手 → フィニッシュ → タンゴ → フラリッシュ』が目印。その後はエスプリ・羽・Procを溢れさせない順で使います♡"
+    },
+    burst: {
+      title: "Lv80 2分バースト",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "事前にゲージを少し残す", cue: "直前準備", icon: "Saber_Dance.png", reason: "エスプリと幻扇を全部使い切らず、ただし上限で溢れない範囲に整えます。" },
+        { name: "テクニカルステップ → 4手", cue: "120秒ごと", icon: "Technical_Step.png", reason: "パーティ全体の2分バーストを開始します。" },
+        { name: "テクニカルフィニッシュ", cue: "最大成功", icon: "Technical_Finish.png", reason: "4手成功で最大威力と最大の与ダメージ上昇を得ます。" },
+        { name: "攻めのタンゴ", cue: "すぐ重ねる", icon: "Devilment.png", reason: "自分とパートナーのクリティカル・ダイレクトヒット率を上げます。" },
+        { name: "フラリッシュ", cue: "バフ中に1回", icon: "Flourish.png", reason: "単体Proc2種と扇の舞い【急】を作り、バフ中の攻撃回数を増やします。" },
+        { name: "剣の舞い", cue: "エスプリ50ごと", icon: "Saber_Dance.png", reason: "エスプリを溢れさせないよう、強い攻撃をバフ中に使います。" },
+        { name: "Procと扇を消費", cue: "光った順", icon: "Fan_Dance_III.png", reason: "フラリッシュで得たProc、幻扇、扇の舞い【急】を期限と上限に注意して使います。" },
+        { name: "インプロビゼーション", cue: "火力回し外", icon: "Improvisation.png", reason: "火力バーストへ入れる技ではありません。攻撃できない時間や全体攻撃前に使い、フィニッシュでバリアを張ります。" }
+      ],
+      tip: "Lv80の2分は『テクニカル → タンゴ → フラリッシュ』へ、剣の舞い・Proc・扇を集める形。インプロは攻撃用ではなく支援用です♡"
+    }
+  }
+
 };
 
 function getRotationData(level, key) {
