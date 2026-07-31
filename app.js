@@ -114,36 +114,80 @@ jobData.dancer.levels[50] = {
 };
 
 const rotationData = {
-  single: {
-    title: "単体 基本回し",
-    patch: "正式確認前",
-    steps: [
-      ["カスケード", "基本①", "assets/icons/jobs/dancer/skills/Cascade.png"],
-      ["ファウンテン", "基本②", "assets/icons/jobs/dancer/skills/Fountain.png"],
-      ["リバースカスケード", "光ったら優先", "assets/icons/jobs/dancer/skills/Reverse_Cascade.png"],
-      ["ファウンテンフォール", "光ったら優先", "assets/icons/jobs/dancer/skills/Fountainfall.png"],
-      ["扇の舞い", "羽がある時", "assets/icons/jobs/dancer/skills/Fan_Dance.png"],
-      ["剣の舞い", "エスプリ50以上", "assets/icons/jobs/dancer/skills/Saber_Dance.png"],
-      ["基本コンボへ戻る", "くり返し", "assets/icons/jobs/dancer/skills/Cascade.png"]
-    ],
-    tip: "現在は表示確認用の仮データです。正式なレベル別回しは最新パッチ確認後に登録します♡"
-  },
-  aoe: {
-    title: "範囲 基本回し",
-    steps: [["敵が複数いるか確認", "確認"], ["範囲コンボ開始", "仮"], ["範囲コンボを継続", "仮"], ["光った範囲Proc", "仮"], ["ゲージ技を使う", "仮"]],
-    tip: "正式データは最新パッチ確認後に登録します♡"
-  },
-  opener: {
-    title: "ボス戦 開幕回し",
-    steps: [["カウントを確認", "準備"], ["事前準備を開始", "開始前"], ["戦闘開始に合わせる", "0秒"], ["最初のGCD", "1手目"], ["バフを合わせる", "指定位置"]],
-    tip: "正式な開幕回しは最新パッチ確認後に登録します♡"
-  },
-  burst: {
-    title: "バースト練習",
-    steps: [["バフの残り時間確認", "準備"], ["ゲージを確保", "準備"], ["バフ開始", "合図"], ["強い技を集中", "連続"], ["通常回しへ戻す", "復帰"]],
-    tip: "正式なバースト順は最新パッチ確認後に登録します♡"
+  50: {
+    single: {
+      title: "単体 基本回し",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "スタンダードステップ", cue: "30秒ごと", icon: "Standard_Step.png", reason: "2つのステップを正しい順で踏み、スタンダードフィニッシュまで完了。Lv50では最優先の強い攻撃で、自分の与ダメージ上昇も維持します。" },
+        { name: "Procが光っているか確認", cue: "先に確認", icon: "Reverse_Cascade.png", reason: "光っている技を先に使うと、次の基本技で新しいProcを上書きして失う事故を防げます。" },
+        { name: "カスケード", cue: "基本①", icon: "Cascade.png", reason: "単体コンボの開始。対称投擲Procが付いたら、次のカスケードより先にリバースカスケードを使います。" },
+        { name: "リバースカスケード", cue: "光ったら", icon: "Reverse_Cascade.png", reason: "対称投擲Procを消費。幻扇が増える可能性があります。" },
+        { name: "ファウンテン", cue: "基本②", icon: "Fountain.png", reason: "カスケードからつなぐ2段目。非対称投擲Procが付く可能性があります。" },
+        { name: "ファウンテンフォール", cue: "光ったら", icon: "Fountainfall.png", reason: "非対称投擲Procを消費。幻扇が増える可能性があります。" },
+        { name: "扇の舞い【序】", cue: "羽を消費", icon: "Fan_Dance.png", reason: "単体用の挟み込み技。幻扇が4枚なら、Proc技を使う前に1枚消費して溢れを防ぎます。" }
+      ],
+      tip: "覚え方は『スタンダードステップを30秒ごと → 光ったProcを先に消費 → カスケード → リバースProc → ファウンテン → ファウンテンProc』。基本は1→3→2→4の感覚です♡"
+    },
+    aoe: {
+      title: "範囲 基本回し",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "敵が2体以上いるか確認", cue: "切替条件", icon: "Windmill.png", reason: "Lv50踊り子は2体以上なら範囲コンボを使います。敵の近くで当てる5m円範囲です。" },
+        { name: "スタンダードステップ", cue: "30秒ごと", icon: "Standard_Step.png", reason: "範囲でも最優先。ステップを2つ踏んでスタンダードフィニッシュまで完了します。" },
+        { name: "Procが光っているか確認", cue: "先に確認", icon: "Rising_Windmill.png", reason: "光った範囲Procを先に消費し、基本技による上書きを防ぎます。" },
+        { name: "ウィンドミル", cue: "範囲①", icon: "Windmill.png", reason: "範囲コンボの開始。対称投擲Procが付く可能性があります。" },
+        { name: "ライジングウィンドミル", cue: "光ったら", icon: "Rising_Windmill.png", reason: "対称投擲Procの範囲攻撃。幻扇が増える可能性があります。" },
+        { name: "ブレードシャワー", cue: "範囲②", icon: "Bladeshower.png", reason: "ウィンドミルからつなぐ2段目。非対称投擲Procが付く可能性があります。" },
+        { name: "ブラッドシャワー", cue: "光ったら", icon: "Bloodshower.png", reason: "非対称投擲Procの範囲攻撃。幻扇が増える可能性があります。" },
+        { name: "扇の舞い【破】", cue: "羽を消費", icon: "Fan_Dance_II.png", reason: "2体以上に当たる範囲用の挟み込み技。幻扇4枚になる前に使います。" }
+      ],
+      tip: "2体以上は『ウィンドミル → 光ったらライジング → ブレードシャワー → 光ったらブラッド』。幻扇は扇の舞い【破】で使います♡"
+    },
+    opener: {
+      title: "Lv50 ボス開幕",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "スタンダードステップ開始", cue: "約-15秒以内", icon: "Standard_Step.png", reason: "戦闘前にステップを始め、攻撃しない2つのステップを先に済ませます。開始から15秒以内にフィニッシュできるようにします。" },
+        { name: "表示された1つ目のステップ", cue: "準備", icon: "Emboite.png", reason: "画面に表示された色・記号と同じステップを押します。固定順ではありません。" },
+        { name: "表示された2つ目のステップ", cue: "準備", icon: "Entrechat.png", reason: "2つ目も表示どおりに押します。" },
+        { name: "スタンダードフィニッシュ", cue: "戦闘開始", icon: "Standard_Finish.png", reason: "ボスを攻撃できる瞬間に合わせて完了。大きな初撃と自分の与ダメージ上昇を同時に得ます。" },
+        { name: "Proc優先の単体基本回し", cue: "その後", icon: "Cascade.png", reason: "フィニッシュ後は、光ったProcを先に使いながら1→3→2→4の基本回しへ移ります。" },
+        { name: "扇の舞い【序】", cue: "羽が4枚前", icon: "Fan_Dance.png", reason: "幻扇が最大になる前に挟み、以後はスタンダードステップを30秒ごとに使います。" }
+      ],
+      tip: "Lv50にはテクニカルステップや攻撃バフのまとまった2分開幕はまだありません。戦闘前にスタンダードステップの2手を済ませ、開始にフィニッシュを合わせるのが中心です♡"
+    },
+    burst: {
+      title: "Lv50 火力を出すタイミング",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "スタンダードステップ", cue: "最優先", icon: "Standard_Step.png", reason: "Lv50で最も分かりやすい火力の山。30秒ごとに遅らせず使います。" },
+        { name: "2ステップを正しく入力", cue: "表示どおり", icon: "Jete.png", reason: "間違えず2つ踏むことで最大のスタンダードフィニッシュになります。" },
+        { name: "スタンダードフィニッシュ", cue: "強い一撃", icon: "Standard_Finish.png", reason: "強い攻撃と与ダメージ上昇を更新します。" },
+        { name: "光ったProcを優先", cue: "上書き防止", icon: "Fountainfall.png", reason: "Procを残したまま対応する基本技を押さず、取りこぼしを防ぎます。" },
+        { name: "扇の舞いを挟む", cue: "羽4枚前", icon: "Fan_Dance.png", reason: "Lv50では大きな2分バースト用に長く貯め込むより、4枚で溢れない管理を優先します。" },
+        { name: "通常回しへ戻る", cue: "くり返し", icon: "Cascade.png", reason: "次の30秒スタンダードステップまで、単体または範囲の基本回しを続けます。" }
+      ],
+      tip: "Lv50には独立した大きなバーストボタンがまだ少ないため、『スタンダードステップを遅らせない・Procを失わない・羽を溢れさせない』の3つが火力の基本です♡"
+    }
   }
 };
+
+function getRotationData(level, key) {
+  const exact = rotationData[level]?.[key];
+  if (exact) return exact;
+  return {
+    title: `${key === "single" ? "単体" : key === "aoe" ? "範囲" : key === "opener" ? "開幕" : "バースト"} 回し`,
+    patch: "未登録",
+    verified: false,
+    steps: [],
+    tip: `Lv${level}の正式な回しはまだ登録していません。Lv50から順番に追加します♡`
+  };
+}
 
 const bossData = {
   mechanic: { title: "ドーナツ攻撃 ♡", lead: "ボスの周りにドーナツ型の攻撃が発生！", action: "安全な場所へ移動！", detail: "攻撃範囲を見て、安全地帯へ早めに移動する。" },
@@ -184,15 +228,23 @@ function diagnoseHotbar(job, levelData, sets) {
 
 function renderRotation(key = selectedRotation) {
   selectedRotation = key;
-  const data = rotationData[key];
+  const data = getRotationData(selectedLevel, key);
   $("#rotationTitle").textContent = `Lv${selectedLevel}・${data.title}`;
   const patchLabel = $("#rotation .patch-row span");
-  if (patchLabel) patchLabel.textContent = `対応パッチ：${data.patch || "正式確認前"}`;
-  $("#rotationList").innerHTML = data.steps.map(([name, combo, icon]) => `
-    <li><span>${name}</span><span class="combo">${combo}</span>${icon
-      ? `<img class="skill-icon" src="${icon}" alt="" aria-hidden="true">`
-      : `<span class="skill-orb" aria-hidden="true"></span>`}</li>`).join("");
-  $("#rotationTip p").textContent = `Lv${selectedLevel}表示：${data.tip}`;
+  if (patchLabel) patchLabel.textContent = `対応パッチ：${data.patch}`;
+  $("#rotationList").classList.toggle("rotation-empty", !data.steps.length);
+  $("#rotationList").innerHTML = data.steps.length
+    ? data.steps.map(step => {
+        const icon = step.icon ? `assets/icons/jobs/dancer/skills/${step.icon}` : "";
+        return `<li>
+          <span class="rotation-step-main"><b>${step.name}</b><small>${step.reason}</small></span>
+          <span class="combo">${step.cue}</span>
+          ${icon ? `<img class="skill-icon" src="${icon}" alt="" aria-hidden="true">` : `<span class="skill-orb" aria-hidden="true"></span>`}
+        </li>`;
+      }).join("")
+    : `<li class="empty-rotation-message"><span>Lv${selectedLevel}の正式データは次の作業で追加します♡</span></li>`;
+  $("#rotationTip b").textContent = data.verified ? "杏里の覚え方♡" : "登録状況";
+  $("#rotationTip p").textContent = data.tip;
 }
 
 function renderBoss(key) {
