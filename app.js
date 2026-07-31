@@ -369,6 +369,88 @@ function restoreSavedHotbar() {
   }
 }
 
+
+
+// v6: SET1〜SET3・WXHB・拡張XHBをコントローラー型で管理
+const HOTBAR_GROUPS = [
+  { id: "set1", label: "SET1（通常）", note: "普段いちばん使う通常クロスホットバー", sides: [["L2", "set1-l2"], ["R2", "set1-r2"]] },
+  { id: "set2", label: "SET2（通常）", note: "SET切替で使う2枚目のクロスホットバー", sides: [["L2", "set2-l2"], ["R2", "set2-r2"]] },
+  { id: "set3", label: "SET3（通常）", note: "SET切替で使う3枚目のクロスホットバー", sides: [["L2", "set3-l2"], ["R2", "set3-r2"]] },
+  { id: "wxhb", label: "WXHB（2回押し）", note: "L2またはR2を素早く2回押して呼び出す下側のホットバー", sides: [["L2×2", "wxhb-l2"], ["R2×2", "wxhb-r2"]] },
+  { id: "expanded", label: "拡張クロスホットバー", note: "L2とR2を順番に押して呼び出す追加ホットバー", sides: [["L2→R2", "expanded-l2r2"], ["R2→L2", "expanded-r2l2"]] }
+];
+let selectedRegistrationGroup = "set1";
+
+const SKILL_ICON_BY_ID = {
+  "cascade":"Cascade.png","fountain":"Fountain.png","reverse-cascade":"Reverse_Cascade.png","fountainfall":"Fountainfall.png",
+  "windmill":"Windmill.png","bladeshower":"Bladeshower.png","rising-windmill":"Rising_Windmill.png","bloodshower":"Bloodshower.png",
+  "standard-step":"Standard_Step.png","fan-dance":"Fan_Dance.png","fan-dance-ii":"Fan_Dance_II.png","en-avant":"En_Avant.png",
+  "second-wind":"Second_Wind.png","peloton":"Peloton.png","head-graze":"Head_Graze.png","arms-length":"Arm's_Length.png",
+  "leg-graze":"Leg_Graze.png","foot-graze":"Foot_Graze.png"
+};
+function skillIcon(skillId){ const f=SKILL_ICON_BY_ID[skillId]; return f ? `assets/icons/jobs/dancer/skills/${f}` : ""; }
+function emptySlots(){ return Object.fromEntries(HOTBAR_SLOT_META.map(([k,,b])=>[k,{button:b,skillId:"",name:"空き"}])); }
+function ensureAllHotbarGroups(){
+  const job=getSelectedJob(); if(!job?.hotbar) return;
+  HOTBAR_GROUPS.flatMap(g=>g.sides).forEach(([trigger,id])=>{
+    if(!job.hotbar.current.some(set=>set.id===id)) job.hotbar.current.push({id,set:id.split('-')[0].toUpperCase(),trigger,slots:emptySlots()});
+  });
+}
+function getSetById(id){ ensureAllHotbarGroups(); return getSelectedJob().hotbar.current.find(set=>set.id===id); }
+function findCurrentSet(trigger){
+  const group=HOTBAR_GROUPS.find(g=>g.id===selectedRegistrationGroup) || HOTBAR_GROUPS[0];
+  const side=group.sides.find(([label])=>label===trigger);
+  return side ? getSetById(side[1]) : null;
+}
+function renderSlotTile(slot,key,editable=false,options=[]){
+  const pos=key.endsWith('Up')?'up':key.endsWith('Left')?'left':key.endsWith('Right')?'right':'down';
+  const icon=skillIcon(slot?.skillId); const name=slot?.name||'空き'; const button=slot?.button||'—';
+  const media=icon ? `<img src="${icon}" alt="${name}" onerror="this.remove()">` : `<span class="slot-fallback">${name==='空き'?'空き':name}</span>`;
+  const select=editable ? `<select data-slot-key="${key}" aria-label="${button}に登録するスキル">${options.map(sk=>`<option value="${sk.id}"${sk.id===(slot?.skillId||'')?' selected':''}>${sk.name}</option>`).join('')}</select>` : '';
+  return `<div class="cross-slot pos-${pos}${editable?' editable-slot':''}">${media}<span class="skill-caption">${name}</span><span class="button-mark">${button}</span>${select}</div>`;
+}
+function renderControllerSide(set,trigger,editable=false,options=[]){
+  const d=['dpadUp','dpadLeft','dpadRight','dpadDown']; const f=['faceUp','faceLeft','faceRight','faceDown'];
+  return `<section class="controller-side"><span class="trigger-badge">${trigger}</span><div class="controller-clusters"><div class="cross-pad">${d.map(k=>renderSlotTile(set?.slots?.[k],k,editable,options)).join('')}</div><div class="cross-pad">${f.map(k=>renderSlotTile(set?.slots?.[k],k,editable,options)).join('')}</div></div></section>`;
+}
+function renderHotbarSet(group){
+  const sides=group.sides.map(([trigger,id])=>renderControllerSide(getSetById(id),trigger)).join('');
+  return `<section class="hotbar-group"><div class="hotbar-group-head"><h4>${group.label}</h4><small>${group.note}</small></div><div class="controller-pair">${sides}</div></section>`;
+}
+function renderHotbar(){
+  const job=getSelectedJob(); const levelData=getSelectedLevelData(); ensureAllHotbarGroups();
+  $("#hotbarJobName").textContent=job.name; $("#profileJobName").textContent=job.name; $("#hotbarDataStatus").textContent=`Lv${selectedLevel}・${job.dataStatus}`;
+  if(selectedHotbarView==='recommended'){
+    $("#hotbarSets").innerHTML=`<div class="hotbar-empty">おすすめ配置は、杏里の全ホットバー登録後に同じボタン配置で比較表示します♡</div>`;
+    renderDiagnosis(job,levelData,[]); return;
+  }
+  $("#hotbarSets").innerHTML=HOTBAR_GROUPS.map(renderHotbarSet).join('');
+  renderDiagnosis(job,levelData,job.hotbar.current);
+}
+function renderRegistrationForm(){
+  ensureAllHotbarGroups(); const picker=$("#registrationGroup");
+  picker.innerHTML=HOTBAR_GROUPS.map(g=>`<option value="${g.id}"${g.id===selectedRegistrationGroup?' selected':''}>${g.label}</option>`).join('');
+  const group=HOTBAR_GROUPS.find(g=>g.id===selectedRegistrationGroup)||HOTBAR_GROUPS[0];
+  $("#registrationNote").innerHTML=`<b>${group.label}</b><span>${group.note}</span><span>左右それぞれ「方向キー4枠＋△□○×4枠」です。</span>`;
+  const options=getSkillOptions();
+  $("#hotbarRegistrationGrid").className='visual-registration';
+  $("#hotbarRegistrationGrid").innerHTML=group.sides.map(([trigger,id])=>renderControllerSide(getSetById(id),trigger,true,options)).join('');
+  $$('#hotbarRegistrationGrid select').forEach(sel=>sel.addEventListener('change',()=>renderRegistrationForm()));
+}
+function openHotbarRegistration(){ if(selectedJob!=="dancer"){showToast("このジョブの登録画面はまだ準備前です♡");return;} renderRegistrationForm(); $("#hotbarDialog").showModal(); }
+function saveHotbarRegistration(){
+  const group=HOTBAR_GROUPS.find(g=>g.id===selectedRegistrationGroup)||HOTBAR_GROUPS[0]; const skillMap=new Map(getSkillOptions().map(s=>[s.id,s]));
+  group.sides.forEach(([trigger,id],sideIndex)=>{ const set=getSetById(id); const side=$$('.visual-registration .controller-side')[sideIndex];
+    $$('select',side).forEach(select=>{ const key=select.dataset.slotKey; const meta=HOTBAR_SLOT_META.find(([k])=>k===key); const sk=skillMap.get(select.value); set.slots[key]=sk?.id?{button:meta[2],skillId:sk.id,name:sk.name}:{button:meta[2],skillId:"",name:"空き"}; });
+  });
+  localStorage.setItem(`anriHotbar-${selectedJob}-all-v6`,JSON.stringify(getSelectedJob().hotbar.current)); $("#hotbarDialog").close(); selectedHotbarView='current';
+  $$('#hotbar .tab').forEach(i=>i.classList.toggle('active',i.dataset.hotbarView==='current')); renderHotbar(); showToast(`${group.label}を保存しました♡`);
+}
+function restoreSavedHotbar(){
+  try{ const saved=JSON.parse(localStorage.getItem('anriHotbar-dancer-all-v6')||localStorage.getItem('anriHotbar-dancer-set1')); if(Array.isArray(saved)) jobData.dancer.hotbar.current=saved; }
+  catch(e){console.warn('保存済みホットバーを読み込めませんでした',e);} ensureAllHotbarGroups();
+}
+
 $$('[data-target]').forEach(button => button.addEventListener('click', () => scrollToTarget(button.dataset.target)));
 $$('.main-nav .nav-pill').forEach(button => button.addEventListener('click', () => { $$('.main-nav .nav-pill').forEach(item => item.classList.remove('active')); button.classList.add('active'); }));
 $$('[data-toast]').forEach(button => button.addEventListener('click', () => showToast(button.dataset.toast)));
@@ -379,9 +461,10 @@ $$('.job-card').forEach(button => button.addEventListener('click', () => selectJ
 $("#hotbarLevel").addEventListener("change", event => { selectedLevel = Number(event.target.value); renderHotbar(); });
 $("#registerHotbar").addEventListener("click", openHotbarRegistration);
 
+$("#registrationGroup").addEventListener("change", event => { selectedRegistrationGroup = event.target.value; renderRegistrationForm(); });
 $("#closeHotbarDialog").addEventListener("click", () => $("#hotbarDialog").close());
 $("#hotbarForm").addEventListener("submit", event => { event.preventDefault(); saveHotbarRegistration(); });
-$("#resetHotbarForm").addEventListener("click", () => { localStorage.removeItem(`anriHotbar-${selectedJob}-set1`); location.reload(); });
+$("#resetHotbarForm").addEventListener("click", () => { localStorage.removeItem(`anriHotbar-${selectedJob}-all-v6`); localStorage.removeItem(`anriHotbar-${selectedJob}-set1`); location.reload(); });
 $("#hotbarDialog").addEventListener("click", event => { if (event.target === $("#hotbarDialog")) $("#hotbarDialog").close(); });
 
 $$('[data-theme]').forEach(button => button.addEventListener('click', () => { document.body.classList.remove('theme-purple','theme-black'); if (button.dataset.theme !== 'pink') document.body.classList.add(`theme-${button.dataset.theme}`); $$('.theme-dot').forEach(item => item.classList.remove('active')); button.classList.add('active'); localStorage.setItem('anriTheme', button.dataset.theme); }));

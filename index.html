@@ -118,18 +118,17 @@
 
   <dialog id="hotbarDialog" class="hotbar-dialog">
     <button class="dialog-close" id="closeHotbarDialog" aria-label="閉じる">×</button>
-    <h2>SET1を登録する♡</h2>
-    <p class="dialog-lead">クロスホットバー1セット分（L2側8枠＋R2側8枠）を登録します。今回は実物確認用の第一段階です。</p>
-    <div class="registration-note">
-      <b>登録する16枠</b>
-      <span>L2：方向キー4枠＋△□○×</span>
-      <span>R2：方向キー4枠＋△□○×</span>
-    </div>
+    <h2>ホットバーを登録する♡</h2>
+    <p class="dialog-lead">実際のコントローラー配置と同じ形を見ながら、使っているホットバーを順番に登録できます。</p>
+    <label class="hotbar-group-picker" for="registrationGroup">登録するホットバー
+      <select id="registrationGroup" aria-label="登録するホットバー"></select>
+    </label>
+    <div class="registration-note" id="registrationNote"></div>
     <form id="hotbarForm">
       <div id="hotbarRegistrationGrid" class="hotbar-registration-grid"></div>
       <div class="dialog-actions">
         <button type="button" class="ghost-btn" id="resetHotbarForm">見本に戻す</button>
-        <button type="submit" class="primary-btn">SET1を保存する</button>
+        <button type="submit" class="primary-btn">このホットバーを保存する</button>
       </div>
     </form>
   </dialog>
