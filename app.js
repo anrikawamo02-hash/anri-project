@@ -136,6 +136,29 @@ jobData.dancer.levels[60] = {
   }
 };
 
+
+// Patch 7.5公式ジョブガイドを基準にした踊り子Lv70データ。
+// Lv62の攻めのタンゴ、Lv66の扇の舞い【急】、Lv70のテクニカルステップを追加。
+jobData.dancer.levels[70] = {
+  requiredSkillsVerified: true,
+  sourcePatch: "7.5",
+  requiredSkills: [
+    ...jobData.dancer.levels[60].requiredSkills,
+    { id: "devilment", name: "攻めのタンゴ", level: 62, reason: "2分ごとに自分とダンスパートナーのクリティカル・ダイレクトヒット率を上げる" },
+    { id: "fan-dance-iii", name: "扇の舞い【急】", level: 66, reason: "扇の舞い【序】【破】から発生するProcを消費する追撃アビリティ" },
+    { id: "technical-step", name: "テクニカルステップ", level: 70, reason: "4ステップ後のテクニカルフィニッシュでパーティ全体の与ダメージを20秒間上げる2分バーストの中心" }
+  ],
+  recommendedSkills: [
+    ...jobData.dancer.levels[60].recommendedSkills
+  ],
+  rotationSkillIds: {
+    single: ["closed-position", "cascade", "fountain", "reverse-cascade", "fountainfall", "standard-step", "fan-dance", "fan-dance-iii", "technical-step", "devilment"],
+    aoe: ["closed-position", "windmill", "bladeshower", "rising-windmill", "bloodshower", "standard-step", "fan-dance-ii", "fan-dance-iii", "technical-step", "devilment"],
+    opener: ["closed-position", "standard-step", "technical-step", "devilment", "fan-dance", "fan-dance-iii", "cascade", "fountain", "reverse-cascade", "fountainfall"],
+    burst: ["technical-step", "devilment", "fan-dance", "fan-dance-ii", "fan-dance-iii", "standard-step"]
+  }
+};
+
 const rotationData = {
   50: {
     single: {
@@ -260,6 +283,72 @@ const rotationData = {
         { name: "通常回しへ戻る", cue: "くり返し", icon: "Cascade.png", reason: "次のスタンダードステップまでProc優先の基本回しを続けます。" }
       ],
       tip: "Lv60では大きな攻撃バフはまだありません。火力はスタンダードステップ、支援は全体攻撃前のサンバと被弾後のワルツ、と役割を分けて覚えます♡"
+    }
+
+  },
+  70: {
+    single: {
+      title: "単体 基本回し",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "クローズドポジション", cue: "戦闘前に確認", icon: "Closed_Position.png", reason: "火力役ひとりをダンスパートナーにします。付与済みなら押し直しません。" },
+        { name: "スタンダードステップ", cue: "30秒ごと", icon: "Standard_Step.png", reason: "Lv70でも通常時の最優先。自分とパートナーの与ダメージ上昇を維持します。" },
+        { name: "光っているProcを先に確認", cue: "上書き防止", icon: "Reverse_Cascade.png", reason: "リバースカスケードやファウンテンフォールが光っていれば、対応する基本技より先に使います。" },
+        { name: "カスケード → ファウンテン", cue: "基本①→②", icon: "Cascade.png", reason: "Procがないときの単体基本コンボです。" },
+        { name: "リバース／ファウンテンフォール", cue: "光ったら", icon: "Fountainfall.png", reason: "発生したProcを消費し、幻扇獲得を狙います。" },
+        { name: "扇の舞い【序】", cue: "羽を消費", icon: "Fan_Dance.png", reason: "単体用の幻扇消費技。羽が4枚になる前に使います。" },
+        { name: "扇の舞い【急】", cue: "光ったらすぐ", icon: "Fan_Dance_III.png", reason: "扇の舞い【序】【破】から50％で発生する追撃です。Procを残したままにせず使います。" },
+        { name: "テクニカルステップ＋攻めのタンゴ", cue: "2分ごと", icon: "Technical_Step.png", reason: "通常回しとは別に、2分ごとの大きな火力タイミングとしてまとめて使います。" }
+      ],
+      tip: "普段はLv60までと同じ『Proc優先の1→3→2→4』。Lv70からは、2分ごとにテクニカルステップと攻めのタンゴを合わせることが新しい柱です♡"
+    },
+    aoe: {
+      title: "範囲 基本回し",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "敵が2体以上いるか確認", cue: "切替条件", icon: "Windmill.png", reason: "2体以上なら範囲コンボを使います。" },
+        { name: "スタンダードステップ", cue: "30秒ごと", icon: "Standard_Step.png", reason: "敵が複数でも最優先。フィニッシュは周囲の敵へ当たります。" },
+        { name: "光っている範囲Procを先に確認", cue: "上書き防止", icon: "Rising_Windmill.png", reason: "ライジングウィンドミルやブラッドシャワーを先に消費します。" },
+        { name: "ウィンドミル → ブレードシャワー", cue: "範囲①→②", icon: "Bladeshower.png", reason: "Procがないときの範囲基本コンボです。" },
+        { name: "ライジング／ブラッドシャワー", cue: "光ったら", icon: "Bloodshower.png", reason: "発生した範囲Procを使い、幻扇獲得を狙います。" },
+        { name: "扇の舞い【破】", cue: "羽を消費", icon: "Fan_Dance_II.png", reason: "複数の敵に当てる幻扇消費技です。" },
+        { name: "扇の舞い【急】", cue: "光ったら", icon: "Fan_Dance_III.png", reason: "対象とその周囲へ当たる追撃なので、単体・範囲のどちらでも使います。" },
+        { name: "テクニカルステップ＋攻めのタンゴ", cue: "2分ごと", icon: "Technical_Step.png", reason: "敵が複数でも2分バーストをまとめ、テクニカルフィニッシュを全員に合わせます。" }
+      ],
+      tip: "範囲も基本はLv60と同じ。Lv70では『2分ごとのテクニカル＋タンゴ』と『扇の舞い【急】が光ったら押す』を追加で覚えます♡"
+    },
+    opener: {
+      title: "Lv70 ボス開幕",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "クローズドポジション確認", cue: "戦闘前", icon: "Closed_Position.png", reason: "ダンスパートナーが付いていることを確認します。" },
+        { name: "スタンダードステップ開始", cue: "戦闘前", icon: "Standard_Step.png", reason: "2つのステップを先に踏み、戦闘開始にフィニッシュを合わせます。" },
+        { name: "スタンダードフィニッシュ", cue: "戦闘開始", icon: "Standard_Finish.png", reason: "初撃を入れ、自分とパートナーの与ダメージ上昇を開始します。" },
+        { name: "テクニカルステップ", cue: "すぐ開始", icon: "Technical_Step.png", reason: "4つの表示ステップを踏み、パーティ全体の2分バーストへ入ります。" },
+        { name: "表示された4ステップ", cue: "順番どおり", icon: "Pirouette.png", reason: "固定順ではなく、画面に表示された色・記号を4つ順番に押します。" },
+        { name: "テクニカルフィニッシュ", cue: "4手後", icon: "Technical_Finish.png", reason: "強い範囲攻撃と、パーティ全体への20秒間の与ダメージ上昇を付与します。" },
+        { name: "攻めのタンゴ", cue: "フィニッシュ直後", icon: "Devilment.png", reason: "自分とパートナーのクリティカル・ダイレクトヒット率を上げ、テクニカル中に重ねます。" },
+        { name: "Proc優先の基本回し", cue: "バフ中", icon: "Fountainfall.png", reason: "光ったProc、扇の舞い【序】、扇の舞い【急】を優先して使います。" }
+      ],
+      tip: "Lv70開幕の形は『スタンダードフィニッシュ → テクニカル4手 → テクニカルフィニッシュ → 攻めのタンゴ』。ここが初めての本格的な2分開幕です♡"
+    },
+    burst: {
+      title: "Lv70 2分バースト",
+      patch: "7.5",
+      verified: true,
+      steps: [
+        { name: "テクニカルステップ", cue: "120秒ごと", icon: "Technical_Step.png", reason: "Lv70の2分バーストの開始ボタンです。" },
+        { name: "表示された4ステップ", cue: "間違えずに", icon: "Emboite.png", reason: "4つ成功させるとテクニカルフィニッシュが最大威力・最大効果になります。" },
+        { name: "テクニカルフィニッシュ", cue: "全員の火力時間", icon: "Technical_Finish.png", reason: "パーティ全体の与ダメージを20秒間上げます。" },
+        { name: "攻めのタンゴ", cue: "すぐ重ねる", icon: "Devilment.png", reason: "自分とパートナーのクリティカル・ダイレクトヒット率を20秒間上げます。" },
+        { name: "扇の舞い【序】／【破】", cue: "羽を使う", icon: "Fan_Dance.png", reason: "幻扇があればバフ中に挟みます。ただし4枚で溢れない管理を優先します。" },
+        { name: "扇の舞い【急】", cue: "光ったら", icon: "Fan_Dance_III.png", reason: "扇の舞いから発生する追撃を、テクニカルとタンゴの効果中に使います。" },
+        { name: "Proc優先の基本回し", cue: "20秒間", icon: "Reverse_Cascade.png", reason: "Lv70ではまだフラリッシュや剣の舞いがないため、通常Procと扇を丁寧に使います。" }
+      ],
+      tip: "覚える合図は『2分になったらテクニカル → 4手 → フィニッシュ → タンゴ』。その20秒に光ったProcと扇を入れればOKです♡"
     }
   }
 };
