@@ -470,3 +470,28 @@ body.font-large { --base-font: 18px; }
   .cross-pad{grid-template-columns:repeat(3,minmax(34px,1fr));grid-template-rows:repeat(3,minmax(34px,1fr))}
   .cross-slot .skill-caption{font-size:.42rem}
 }
+
+/* v7: スキル回しとホットバーで表示レベルを共通化 */
+.rotation-control-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 9px 10px;
+  border: 1px solid rgba(239, 164, 188, .32);
+  border-radius: 12px;
+  background: rgba(21, 14, 20, .7);
+}
+.rotation-control-row .level-picker { margin: 0; }
+.shared-level-note {
+  color: var(--pink-soft);
+  font-size: .68rem;
+  white-space: nowrap;
+}
+@media (max-width: 520px) {
+  .rotation-control-row { align-items: stretch; flex-direction: column; }
+  .shared-level-note { text-align: right; }
+}

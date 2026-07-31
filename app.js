@@ -156,6 +156,7 @@ const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 let selectedJob = "dancer";
 let selectedLevel = 100;
 let selectedHotbarView = "current";
+let selectedRotation = "single";
 
 function getSelectedJob() {
   return jobData[selectedJob];
@@ -181,16 +182,17 @@ function diagnoseHotbar(job, levelData, sets) {
   return { missingRequired, missingFromRotations };
 }
 
-function renderRotation(key) {
+function renderRotation(key = selectedRotation) {
+  selectedRotation = key;
   const data = rotationData[key];
-  $("#rotationTitle").textContent = data.title;
+  $("#rotationTitle").textContent = `Lv${selectedLevel}・${data.title}`;
   const patchLabel = $("#rotation .patch-row span");
   if (patchLabel) patchLabel.textContent = `対応パッチ：${data.patch || "正式確認前"}`;
   $("#rotationList").innerHTML = data.steps.map(([name, combo, icon]) => `
     <li><span>${name}</span><span class="combo">${combo}</span>${icon
       ? `<img class="skill-icon" src="${icon}" alt="" aria-hidden="true">`
       : `<span class="skill-orb" aria-hidden="true"></span>`}</li>`).join("");
-  $("#rotationTip p").textContent = data.tip;
+  $("#rotationTip p").textContent = `Lv${selectedLevel}表示：${data.tip}`;
 }
 
 function renderBoss(key) {
@@ -202,7 +204,20 @@ function renderLevelOptions() {
   const job = getSelectedJob();
   const validLevels = job.supportedLevels.filter(level => job.levels[level]);
   if (!validLevels.includes(selectedLevel)) selectedLevel = validLevels.at(-1) || 100;
-  $("#hotbarLevel").innerHTML = validLevels.map(level => `<option value="${level}"${level === selectedLevel ? " selected" : ""}>Lv${level}</option>`).join("");
+  const options = validLevels.map(level => `<option value="${level}"${level === selectedLevel ? " selected" : ""}>Lv${level}</option>`).join("");
+  $("#hotbarLevel").innerHTML = options;
+  $("#rotationLevel").innerHTML = options;
+}
+
+function changeSharedLevel(nextLevel) {
+  const job = getSelectedJob();
+  const level = Number(nextLevel);
+  if (!job.supportedLevels.includes(level)) return;
+  selectedLevel = level;
+  localStorage.setItem(`anriDisplayLevel-${selectedJob}`, String(level));
+  renderLevelOptions();
+  renderRotation(selectedRotation);
+  renderHotbar();
 }
 
 function renderHotbarSet(set) {
@@ -282,9 +297,11 @@ function selectJob(jobId) {
     return;
   }
   selectedJob = jobId;
-  selectedLevel = nextJob.supportedLevels.at(-1) || 100;
+  const savedLevel = Number(localStorage.getItem(`anriDisplayLevel-${jobId}`));
+  selectedLevel = nextJob.supportedLevels.includes(savedLevel) ? savedLevel : (nextJob.supportedLevels.at(-1) || 100);
   $$('.job-card').forEach(item => item.classList.toggle('selected', item.dataset.job === jobId));
   renderLevelOptions();
+  renderRotation(selectedRotation);
   renderHotbar();
   showToast(`${nextJob.name}を選択しました♡`);
 }
@@ -454,11 +471,12 @@ function restoreSavedHotbar(){
 $$('[data-target]').forEach(button => button.addEventListener('click', () => scrollToTarget(button.dataset.target)));
 $$('.main-nav .nav-pill').forEach(button => button.addEventListener('click', () => { $$('.main-nav .nav-pill').forEach(item => item.classList.remove('active')); button.classList.add('active'); }));
 $$('[data-toast]').forEach(button => button.addEventListener('click', () => showToast(button.dataset.toast)));
-$$('[data-rotation]').forEach(button => button.addEventListener('click', () => { $$('#rotation .tab').forEach(item => item.classList.remove('active')); button.classList.add('active'); renderRotation(button.dataset.rotation); }));
+$$('[data-rotation]').forEach(button => button.addEventListener('click', () => { $$('#rotation .tab').forEach(item => item.classList.remove('active')); button.classList.add('active'); selectedRotation = button.dataset.rotation; renderRotation(selectedRotation); }));
 $$('[data-boss]').forEach(button => button.addEventListener('click', () => { $$('#boss .tab').forEach(item => item.classList.remove('active')); button.classList.add('active'); renderBoss(button.dataset.boss); }));
 $$('[data-hotbar-view]').forEach(button => button.addEventListener('click', () => { $$('#hotbar .tab').forEach(item => item.classList.remove('active')); button.classList.add('active'); selectedHotbarView = button.dataset.hotbarView; renderHotbar(); }));
 $$('.job-card').forEach(button => button.addEventListener('click', () => selectJob(button.dataset.job)));
-$("#hotbarLevel").addEventListener("change", event => { selectedLevel = Number(event.target.value); renderHotbar(); });
+$("#hotbarLevel").addEventListener("change", event => changeSharedLevel(event.target.value));
+$("#rotationLevel").addEventListener("change", event => changeSharedLevel(event.target.value));
 $("#registerHotbar").addEventListener("click", openHotbarRegistration);
 
 $("#registrationGroup").addEventListener("change", event => { selectedRegistrationGroup = event.target.value; renderRegistrationForm(); });
@@ -487,6 +505,8 @@ function restoreSettings() {
 }
 
 restoreSavedHotbar();
+const initialSavedLevel = Number(localStorage.getItem(`anriDisplayLevel-${selectedJob}`));
+if (getSelectedJob().supportedLevels.includes(initialSavedLevel)) selectedLevel = initialSavedLevel;
 renderRotation('single');
 renderBoss('mechanic');
 renderLevelOptions();

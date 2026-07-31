@@ -65,6 +65,13 @@
         <div class="tabs" role="tablist" aria-label="スキル回しの種類">
           <button class="tab active" data-rotation="single">単体</button><button class="tab" data-rotation="aoe">範囲</button><button class="tab" data-rotation="opener">開幕</button><button class="tab" data-rotation="burst">バースト</button>
         </div>
+        <div class="rotation-control-row">
+          <label class="level-picker" for="rotationLevel">
+            表示レベル
+            <select id="rotationLevel" aria-label="スキル回しの表示レベル"></select>
+          </label>
+          <span class="shared-level-note">ホットバーと連動</span>
+        </div>
         <div class="patch-row"><strong id="rotationTitle">単体 基本回し</strong><span>対応パッチ：確認前</span></div>
         <ol class="rotation-list" id="rotationList"></ol>
         <div class="tip-box" id="rotationTip"><b>ここでバフ！</b><p>今は見た目確認用の仮データ。最新パッチを確認してから正しい内容へ差し替えます♡</p></div>
