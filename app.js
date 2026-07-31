@@ -2,7 +2,9 @@ const LEVELS = [50, 60, 70, 80, 90, 100];
 
 const createLevelRecord = () => ({
   requiredSkills: [],
+  recommendedSkills: [],
   requiredSkillsVerified: false,
+  sourcePatch: null,
   rotationSkillIds: {
     single: [],
     aoe: [],
@@ -21,9 +23,10 @@ const jobData = {
     name: "踊り子",
     english: "DANCER",
     available: true,
-    dataStatus: "正式確認前",
+    dataStatus: "Patch 7.5対応",
     supportedLevels: [...LEVELS],
     levels: createLevelMap(),
+    hotbarCurrentVerified: false,
     hotbar: {
       current: [
         {
@@ -58,7 +61,45 @@ const jobData = {
     dataStatus: "未登録",
     supportedLevels: [70, 80, 90, 100],
     levels: createLevelMap(),
+    hotbarCurrentVerified: false,
     hotbar: { current: [], recommended: [] }
+  }
+};
+
+
+// Patch 7.5公式ジョブガイドを基準にした踊り子Lv50データ。
+// 「requiredSkills」は通常のPvE戦闘で常時使える状態にしておきたい中核アクション、
+// 「recommendedSkills」は場面依存だが登録を推奨する補助アクション。
+jobData.dancer.levels[50] = {
+  requiredSkillsVerified: true,
+  sourcePatch: "7.5",
+  requiredSkills: [
+    { id: "cascade", name: "カスケード", level: 1, reason: "単体基本コンボの1段目" },
+    { id: "fountain", name: "ファウンテン", level: 2, reason: "単体基本コンボの2段目" },
+    { id: "windmill", name: "ウィンドミル", level: 15, reason: "範囲基本コンボの1段目" },
+    { id: "standard-step", name: "スタンダードステップ", level: 15, reason: "自身の与ダメージ上昇を維持する中核アクション" },
+    { id: "reverse-cascade", name: "リバースカスケード", level: 20, reason: "対称投擲Procの単体攻撃" },
+    { id: "bladeshower", name: "ブレードシャワー", level: 25, reason: "範囲基本コンボの2段目" },
+    { id: "fan-dance", name: "扇の舞い【序】", level: 30, reason: "幻扇を消費する単体アビリティ" },
+    { id: "rising-windmill", name: "ライジングウィンドミル", level: 35, reason: "対称投擲Procの範囲攻撃" },
+    { id: "fountainfall", name: "ファウンテンフォール", level: 40, reason: "非対称投擲Procの単体攻撃" },
+    { id: "bloodshower", name: "ブラッドシャワー", level: 45, reason: "非対称投擲Procの範囲攻撃" },
+    { id: "fan-dance-ii", name: "扇の舞い【破】", level: 50, reason: "幻扇を消費する範囲アビリティ" },
+    { id: "en-avant", name: "アン・アヴァン", level: 50, reason: "回避と位置調整に使う移動アクション" },
+    { id: "second-wind", name: "内丹", level: 8, reason: "自身を回復する生存用ロールアクション" },
+    { id: "peloton", name: "プロトン", level: 20, reason: "非戦闘時のパーティ移動を補助" },
+    { id: "head-graze", name: "ヘッドグレイズ", level: 24, reason: "中断可能な敵の詠唱を止める" },
+    { id: "arms-length", name: "アームズレングス", level: 32, reason: "ノックバック・引き寄せ対策" }
+  ],
+  recommendedSkills: [
+    { id: "leg-graze", name: "レッググレイズ", level: 6, reason: "ヘヴィが有効な特殊場面用" },
+    { id: "foot-graze", name: "フットグレイズ", level: 10, reason: "バインドが有効な特殊場面用" }
+  ],
+  rotationSkillIds: {
+    single: ["cascade", "fountain", "reverse-cascade", "fountainfall", "standard-step", "fan-dance"],
+    aoe: ["windmill", "bladeshower", "rising-windmill", "bloodshower", "standard-step", "fan-dance-ii"],
+    opener: [],
+    burst: []
   }
 };
 
@@ -173,7 +214,19 @@ function renderDiagnosis(job, levelData, sets) {
     box.innerHTML = `<h3>診断結果</h3><div class="diagnosis-list">
       <p class="diagnosis-item good">✓ ジョブとレベルを切り替えて読み込める構造に対応済み♡</p>
       <p class="diagnosis-item good">✓ 必須スキルと回し使用スキルを別々に照合できる診断構造に対応済み♡</p>
-      <p class="diagnosis-item info">Lv${selectedLevel}の正式診断は、最新パッチ確認済みの必須スキルと杏里の実際の全ホットバーを登録後に開始します。</p>
+      <p class="diagnosis-item info">Lv${selectedLevel}の正式データはまだ登録されていません。</p>
+    </div>`;
+    return;
+  }
+
+  if (!job.hotbarCurrentVerified && selectedHotbarView === "current") {
+    const requiredNames = levelData.requiredSkills.map(skill => skill.name).join("・");
+    const recommendedNames = levelData.recommendedSkills.map(skill => skill.name).join("・");
+    box.innerHTML = `<h3>診断結果</h3><div class="diagnosis-list">
+      <p class="diagnosis-item good">✓ Lv${selectedLevel}の必須スキルデータをPatch ${levelData.sourcePatch}基準で登録済み♡</p>
+      <p class="diagnosis-item info"><strong>必須 ${levelData.requiredSkills.length}個：</strong>${requiredNames}</p>
+      ${recommendedNames ? `<p class="diagnosis-item info"><strong>場面別推奨 ${levelData.recommendedSkills.length}個：</strong>${recommendedNames}</p>` : ""}
+      <p class="diagnosis-item warning">⚠ 現在表示中の配置は見本データです。杏里の実際の全ホットバーを登録するまで、不足判定は開始しません。</p>
     </div>`;
     return;
   }
