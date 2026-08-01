@@ -1004,21 +1004,58 @@ function renderRegistrationForm(){
   $("#hotbarRegistrationGrid").className='visual-registration';
   $("#hotbarRegistrationGrid").innerHTML=group.sides.map(([trigger,id])=>renderControllerSide(getSetById(id),trigger,true,options)).join('');
   const skillMap = new Map(options.map(skill => [skill.id, skill]));
-  $$('#hotbarRegistrationGrid select').forEach((select, index) => {
-    select.addEventListener('change', () => {
-      const sideIndex = Math.floor(index / HOTBAR_SLOT_META.length);
-      const sideInfo = group.sides[sideIndex];
-      if (!sideInfo) return;
-      const [, setId] = sideInfo;
-      const set = getSetById(setId);
-      const key = select.dataset.slotKey;
-      const meta = HOTBAR_SLOT_META.find(([slotKey]) => slotKey === key);
-      const skill = skillMap.get(select.value);
-      set.slots[key] = skill?.id
-        ? { button: meta[2], skillId: skill.id, name: skill.name }
-        : { button: meta[2], skillId: "", name: "空き" };
-      renderRegistrationForm();
-    });
+  const grid = $("#hotbarRegistrationGrid");
+
+  function applyRegistrationSelection(select) {
+    const side = select.closest('.controller-side');
+    if (!side) return;
+    const sideIndex = $$('.controller-side', grid).indexOf(side);
+    const sideInfo = group.sides[sideIndex];
+    if (!sideInfo) return;
+
+    const [, setId] = sideInfo;
+    const set = getSetById(setId);
+    const key = select.dataset.slotKey;
+    const meta = HOTBAR_SLOT_META.find(([slotKey]) => slotKey === key);
+    if (!set || !meta) return;
+
+    const skill = skillMap.get(select.value);
+    set.slots[key] = skill?.id
+      ? { button: meta[2], skillId: skill.id, name: skill.name }
+      : { button: meta[2], skillId: "", name: "空き" };
+
+    // iPhoneのネイティブ選択画面を閉じた直後でも、選択した枠だけをその場で更新する。
+    // フォーム全体は描き直さないため、選択内容が元へ戻らない。
+    const tile = select.closest('.cross-slot');
+    if (tile) {
+      const caption = $('.skill-caption', tile);
+      if (caption) caption.textContent = skill?.name || '空き';
+
+      const oldImage = $('img', tile);
+      const oldFallback = $('.slot-fallback', tile);
+      const icon = skillIcon(skill?.id || '');
+      if (oldImage) oldImage.remove();
+      if (oldFallback) oldFallback.remove();
+
+      const media = document.createElement(icon ? 'img' : 'span');
+      if (icon) {
+        media.src = icon;
+        media.alt = skill?.name || '';
+        media.addEventListener('error', () => media.remove(), { once: true });
+      } else {
+        media.className = 'slot-fallback';
+        media.textContent = '空き';
+      }
+      tile.insertBefore(media, tile.firstChild);
+    }
+
+    // 選択ごとに下書きを保存。最後の「保存」で正式診断を開始する。
+    localStorage.setItem(`anriHotbar-${selectedJob}-all-v6`, JSON.stringify(getSelectedJob().hotbar.current));
+  }
+
+  $$('#hotbarRegistrationGrid select').forEach(select => {
+    select.addEventListener('input', () => applyRegistrationSelection(select));
+    select.addEventListener('change', () => applyRegistrationSelection(select));
   });
 }
 function openHotbarRegistration(){ if(selectedJob!=="dancer"){showToast("このジョブの登録画面はまだ準備前です♡");return;} renderRegistrationForm(); $("#hotbarDialog").showModal(); }
