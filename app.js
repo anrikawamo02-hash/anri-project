@@ -936,11 +936,11 @@ function restoreSavedHotbar() {
 
 // v6: SET1〜SET3・WXHB・拡張XHBをコントローラー型で管理
 const HOTBAR_GROUPS = [
-  { id: "set1", label: "SET1（通常）", note: "普段いちばん使う通常クロスホットバー", sides: [["L2", "set1-l2"], ["R2", "set1-r2"]] },
-  { id: "set2", label: "SET2（通常）", note: "SET切替で使う2枚目のクロスホットバー", sides: [["L2", "set2-l2"], ["R2", "set2-r2"]] },
-  { id: "set3", label: "SET3（通常）", note: "SET切替で使う3枚目のクロスホットバー", sides: [["L2", "set3-l2"], ["R2", "set3-r2"]] },
-  { id: "wxhb", label: "WXHB（2回押し）", note: "L2またはR2を素早く2回押して呼び出す下側のホットバー", sides: [["L2×2", "wxhb-l2"], ["R2×2", "wxhb-r2"]] },
-  { id: "expanded", label: "拡張クロスホットバー", note: "L2とR2を順番に押して呼び出す追加ホットバー", sides: [["L2→R2", "expanded-l2r2"], ["R2→L2", "expanded-r2l2"]] }
+  { id: "set1", label: "SET1（通常）", note: "普段いちばん使う通常クロスホットバー", sides: [["R2", "set1-r2"], ["L2", "set1-l2"]] },
+  { id: "set2", label: "SET2（通常）", note: "SET切替で使う2枚目のクロスホットバー", sides: [["R2", "set2-r2"], ["L2", "set2-l2"]] },
+  { id: "set3", label: "SET3（通常）", note: "SET切替で使う3枚目のクロスホットバー", sides: [["R2", "set3-r2"], ["L2", "set3-l2"]] },
+  { id: "wxhb", label: "WXHB（2回押し）", note: "L2またはR2を素早く2回押して呼び出す下側のホットバー", sides: [["R2×2", "wxhb-r2"], ["L2×2", "wxhb-l2"]] },
+  { id: "expanded", label: "拡張クロスホットバー", note: "L2とR2を順番に押して呼び出す追加ホットバー", sides: [["R2→L2", "expanded-r2l2"], ["L2→R2", "expanded-l2r2"]] }
 ];
 let selectedRegistrationGroup = "set1";
 
