@@ -1,4 +1,4 @@
-Anri's FF14 Guide v15
+Anri's FF14 Guide v16
 
 【今回の変更】
 ・コントローラー表示の左側をR2、右側をL2へ変更

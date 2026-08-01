@@ -1003,7 +1003,23 @@ function renderRegistrationForm(){
   const options=getSkillOptions();
   $("#hotbarRegistrationGrid").className='visual-registration';
   $("#hotbarRegistrationGrid").innerHTML=group.sides.map(([trigger,id])=>renderControllerSide(getSetById(id),trigger,true,options)).join('');
-  $$('#hotbarRegistrationGrid select').forEach(sel=>sel.addEventListener('change',()=>renderRegistrationForm()));
+  const skillMap = new Map(options.map(skill => [skill.id, skill]));
+  $$('#hotbarRegistrationGrid select').forEach((select, index) => {
+    select.addEventListener('change', () => {
+      const sideIndex = Math.floor(index / HOTBAR_SLOT_META.length);
+      const sideInfo = group.sides[sideIndex];
+      if (!sideInfo) return;
+      const [, setId] = sideInfo;
+      const set = getSetById(setId);
+      const key = select.dataset.slotKey;
+      const meta = HOTBAR_SLOT_META.find(([slotKey]) => slotKey === key);
+      const skill = skillMap.get(select.value);
+      set.slots[key] = skill?.id
+        ? { button: meta[2], skillId: skill.id, name: skill.name }
+        : { button: meta[2], skillId: "", name: "空き" };
+      renderRegistrationForm();
+    });
+  });
 }
 function openHotbarRegistration(){ if(selectedJob!=="dancer"){showToast("このジョブの登録画面はまだ準備前です♡");return;} renderRegistrationForm(); $("#hotbarDialog").showModal(); }
 function saveHotbarRegistration(){
